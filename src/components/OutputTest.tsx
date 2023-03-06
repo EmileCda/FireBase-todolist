@@ -1,10 +1,13 @@
+// import { useStore } from "@nanostores/react";
 import { useStore } from "@nanostores/react";
-import { subScriptionStore } from "../store/Subscription.store";
+import { redirect } from "react-router";
+import { SubscribeStore } from "../store/Subscription.store";
 /**
  * this componnent is for test , should be terminate on release 
  */
 export default function OutputTest() {
-  const { username, password } = useStore(subScriptionStore);
+  const { username, password } = useStore(SubscribeStore);
+  redirect ("/")
 
   return (
     <>

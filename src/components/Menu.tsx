@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { MenuContainer, MenuHeader, MenuItem } from "../style/Menu.style";
+import { MenuContainer,  MenuItem } from "../style/Menu.style";
 
 /**
  * this function do ...
