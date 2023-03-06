@@ -77,8 +77,6 @@ export const CheckUser = action(SubscribeStore, "CheckUser", async (store) => {
     password,
   )
 
-  console.log(userAutorized);
-  console.log(userAutorized.user.uid);
   store.setKey("userLogged", userAutorized.user.email);
   store.setKey("uid", userAutorized.user.uid);
 

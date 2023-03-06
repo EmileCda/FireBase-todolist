@@ -10,19 +10,20 @@ import { createGlobalStyle } from "styled-components";
  */
 export const AppTheme = {
   colors: {
-    dark: "#202020",
-    lessDark: "#333533",
-    medium: "#ffd100",
-    lessLight: "#ffee32",
-    light: "#d6d6d6",
+    dark: "#075252",
+    lessDark: "#4F4F4F",
+    medium: "#557859",
+    lessLight: "#F0F0F0AB",
+    light: "#EDFFFB",
   },
   font: {
-    regular: "Sora,sans-serif",
-    extra: "Sora,sans-serif",
-    Logo: "Sora,sans-serif",
+    regular: "Poppins, cursive",
+    extra: "Lobster, cursive",
+    Logo: "Lobster, cursive",
   },
   BorderRadius: "0.6rem",
 };
+
 
 export const App = styled.div`
   display: flex;

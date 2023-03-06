@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { getAuth } from "firebase/auth";
 import { initializeApp } from "firebase/app";
-import { getFirestore } from 'firebase/firestore'
+import { addDoc, collection, doc, getDoc, getFirestore } from 'firebase/firestore'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -29,3 +29,24 @@ export const firebaseDb = getFirestore(firebase)
 
 // Nous pouvons aussi en faire un export par défaut
 export default { auth: firebaseAuth, db: firebaseDb }
+
+
+// export async function createTodoList(){
+
+// const myCollection = collection (firebaseDb, TODOLIST_COLLECTION);
+
+// const refTtodoList = await addDoc(todoListName);
+// const id = refTtodoList.id; 
+
+//   const snap = await getDoc(doc(firebaseDb, TODOLIST_COLLECTION, id))
+
+  
+//   const newATodoList = snap.data()
+
+
+//   return {
+//     id: id,
+//     ...newAddress,
+//   } as Identifiable<Address>
+
+// }

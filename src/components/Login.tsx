@@ -35,8 +35,6 @@ export default function Login() {
         onChange={(e) => checkPass(e.currentTarget.value)}
         name="password"
       />
-      <p>userLogged:{userLogged}</p>
-      <p>uid:{uid}</p>
       <Button onClick={CheckUser}>Se connecter</Button>
       <p>
         Pas de compte ?<Link to="/Subscription">Subscription</Link>
