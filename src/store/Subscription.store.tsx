@@ -3,7 +3,7 @@
  *
  *
  */
-import { createUserWithEmailAndPassword } from "@firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "@firebase/auth";
 import { action, map } from "nanostores";
 import { firebaseAuth } from "../lib/Firebase";
 
@@ -12,8 +12,8 @@ export type TSubscribeStore = {
   password: string;
   IsValideUsername: boolean | null;
   isvalidePass: boolean | null;
-  userLogged :string | null;
-    uid : string |null;
+  userLogged: string | null;
+  uid: string | null;
 };
 
 export const SubscribeStore = map<TSubscribeStore>({
@@ -22,7 +22,7 @@ export const SubscribeStore = map<TSubscribeStore>({
   IsValideUsername: false,
   isvalidePass: false,
   userLogged: "",
-   uid : "",
+  uid: "",
 });
 
 export const validateUsername = action(
@@ -68,25 +68,40 @@ export const checkPass = action(
 );
 
 // ---------------------------------------------------------------
+export const CheckUser = action(SubscribeStore, "CheckUser", async (store) => {
 
-// export const LogIn = action(SubscribeStore, "LogIn", (store) => {});
+  const { username, password } = store.get();
+  const userAutorized = await signInWithEmailAndPassword(
+    firebaseAuth,
+    username,
+    password,
+  )
+
+  console.log(userAutorized);
+  console.log(userAutorized.user.uid);
+  store.setKey("userLogged", userAutorized.user.email);
+  store.setKey("uid", userAutorized.user.uid);
+
+});
 
 // ---------------------------------------------------------------
-export const CreateUser = action(
+export const  CreateUser = action(
   SubscribeStore,
   "CreateUser",
   async (store) => {
     const { username, password } = store.get();
-    const credential = await createUserWithEmailAndPassword(
+
+    
+    const valideUser = await createUserWithEmailAndPassword(
       firebaseAuth,
       username,
       password
     );
-    // store.setkey("user", credential.user);
-    console.log(credential.user.email);
-    console.log(credential.user.uid);
-    
-    store.setKey("userLogged", credential.user.email);
-    store.setKey("uid", credential.user.uid);
+    console.log(valideUser);
+    console.log(`[${valideUser.user.email}]`);
+    console.log(`[${valideUser.user.uid}]`);
+
+    store.setKey("userLogged", valideUser.user.email);
+    store.setKey("uid", valideUser.user.uid);
   }
 );

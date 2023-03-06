@@ -6,14 +6,14 @@ import { SubscribeStore } from "../store/Subscription.store";
  * this componnent is for test , should be terminate on release 
  */
 export default function OutputTest() {
-  const { username, password } = useStore(SubscribeStore);
-  redirect ("/")
+  const { username, password,uid } = useStore(SubscribeStore);
 
   return (
     <>
       <h1>Inscription</h1>
       <p>username : {username}</p>
       <p>password : {password}</p>
+      <p>UID : {uid}</p>
     </>
   );
 }

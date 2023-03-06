@@ -16,6 +16,11 @@ export default function Menu() {
           </Link>
         </MenuItem>
         <MenuItem>
+          <Link to="/Login" >
+          Login
+          </Link>
+        </MenuItem>
+        <MenuItem>
           <Link to="/Subscription" >
           Subscription
           </Link>
