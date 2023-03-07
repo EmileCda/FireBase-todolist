@@ -3,6 +3,11 @@ import { Link, Navigate } from "react-router-dom";
 import { toggleUser } from "../store/Menu.store";
 import { SubscribeStore } from "../store/Subscription.store";
 import {
+  selectTodoList,
+  todolistStore,
+  Ttodolist,
+} from "../store/TodoList.store";
+import {
   HomeContainer,
   IconAdd,
   IconUser,
@@ -16,21 +21,19 @@ import {
   UpperList,
 } from "../style/Home.style";
 
-export function TodoListClicked(id: string) {
-  console.log(`TodoListClicked ${id}`);
-}
 
-export function DisplayTodoList(listName: string, id: string) {
+export function DisplayTodoList(listName: string,responsible:string, id: number) {
+  const { listTodoList } = useStore(todolistStore);
   return (
     <>
-      <TodoList onClick={() => TodoListClicked(id)}>
+      <TodoList onClick={() => selectTodoList(id)}>
         <UpperList onClick={toggleUser}>
           <IconUser>
             <i className="fa-solid fa-user"></i>
           </IconUser>
           <TextUser>
             <p>Par</p>
-            <p>userLogged</p>
+            <p>{responsible}</p>
           </TextUser>
         </UpperList>
         <LowerList>{listName}</LowerList>
@@ -38,7 +41,6 @@ export function DisplayTodoList(listName: string, id: string) {
     </>
   );
 }
-
 
 export function NewTodoList() {
   return (
@@ -59,7 +61,8 @@ export function NewTodoList() {
  * this function do ...
  */
 export default function Home() {
-  const { username, password, userLogged, uid } = useStore(SubscribeStore);
+  const { uid } = useStore(SubscribeStore);
+  const { listTodoList,idTodoList,todolistName,reponsible } = useStore(todolistStore);
 
   if (!uid) {
     return <Navigate to="/Login"></Navigate>;
@@ -67,11 +70,15 @@ export default function Home() {
   return (
     <>
       <HomeContainer>
-        <Title>Mes Todos</Title>
-        {DisplayTodoList("Petite course", "1")}
-        {DisplayTodoList("menage", "2")}
-        {DisplayTodoList("FTT", "3")}
-        {NewTodoList()}
+        <Title>Mes Todos : {idTodoList}</Title>
+        <p>{todolistName} {reponsible}</p>
+        <ul>
+          {listTodoList.map((TodoList: Ttodolist, index: number) => (
+            <li key={index} onClick={() => selectTodoList(index)}>
+              {DisplayTodoList(TodoList.todolistName,TodoList.reponsible,index)}
+            </li>
+          ))}
+        </ul>
       </HomeContainer>
     </>
   );

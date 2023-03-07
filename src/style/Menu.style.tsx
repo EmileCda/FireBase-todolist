@@ -56,6 +56,8 @@ export const MenuContainer = styled.div<{isClicked: boolean}>`
   transition: all 0.5s ease-out;
   border-radius: 0px 10px 0px 0px;
   margin-left : ${props=>props.isClicked ? "0%" : "-200%"};
+  opacity: 0.6;
+
 `
 
 /**
@@ -108,4 +110,5 @@ export const UserInformation = styled.div<{isClicked: boolean}>`
   padding : 1rem;
   transition: all 0.5s ease-out;
   margin-left : ${props=>props.isClicked ? "0%" : "-200%"};
+  opacity: 0.6;
 `;

@@ -40,21 +40,21 @@ export const App = styled.div`
  */
 export const AppGlobalStyle = createGlobalStyle`
   :root {
-    background-color:${AppTheme.colors.light}
+    background-color:${AppTheme.colors.light};
+    font-size: 18px;
+    font-family: ${AppTheme.font.regular};
+    box-sizing: border-box;
   }
   html, body, #root {
-    margin: 0;
-    padding: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     min-width: 100vw;
     min-height: 100vh;
-    font-size: 18px;
-  }
-  * {
-    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+
   }
   .hide{
     display: none;

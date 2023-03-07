@@ -1,6 +1,6 @@
 import { createUserWithEmailAndPassword } from "@firebase/auth";
 import { useStore } from "@nanostores/react";
-import { Navigate, redirect } from "react-router";
+import { Navigate } from "react-router";
 import {
   checkEmail,
   checkPass,
@@ -15,7 +15,7 @@ import { Button } from "../style/Subscription.style";
  */
 
 export default function Subscription() {
-  const { userLogged, uid } = useStore(SubscribeStore);
+  const { userLogged, uid, isSending } = useStore(SubscribeStore);
 
   if (uid) {
     return <Navigate to="/"></Navigate>;
@@ -36,7 +36,9 @@ export default function Subscription() {
       />
       <p>{userLogged}</p>
       <p>{uid}</p>
-      <Button onClick={CreateUser}>S'inscrire</Button>
+      <Button onClick={CreateUser} >S'inscrire</Button>
+      {/* <Button onClick={CreateUser} isVisible={isSending}>S'inscrire</Button> */}
+      {/* <MenuUser onClick={toggleUser}  isVisible={userLogged ? true: false}> */}
       <p>Vous avez un compte? Connectez vous</p>
     </>
   );

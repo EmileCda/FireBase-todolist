@@ -17,7 +17,7 @@ import { Button } from "../style/Subscription.style";
  */
 
 export default function Login() {
-  const { username, password, userLogged, uid } = useStore(SubscribeStore);
+  const { uid } = useStore(SubscribeStore);
 
   if (uid) {
     return <Navigate to="/"></Navigate>;
