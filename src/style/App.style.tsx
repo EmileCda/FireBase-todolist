@@ -15,6 +15,8 @@ export const AppTheme = {
     medium: "#557859",
     lessLight: "#F0F0F0AB",
     light: "#EDFFFB",
+    checked:"#F5F5F5",
+    trash: "#BB8579",
   },
   font: {
     regular: "Poppins, cursive",

@@ -1,5 +1,5 @@
 import { useStore } from "@nanostores/react";
-import { Link, Navigate } from "react-router-dom";
+import { Navigate } from "react-router";
 import { toggleUser } from "../store/Menu.store";
 import { SubscribeStore } from "../store/Subscription.store";
 import {
@@ -21,8 +21,11 @@ import {
   UpperList,
 } from "../style/Home.style";
 
-
-export function DisplayTodoList(listName: string,responsible:string, id: number) {
+export function DisplayTodoList(
+  listName: string,
+  responsible: string,
+  id: number
+) {
   const { listTodoList } = useStore(todolistStore);
   return (
     <>
@@ -57,12 +60,29 @@ export function NewTodoList() {
   );
 }
 
+/** this function is going to load data from firebase to local store */
+export function InitData() {
+  //  for testing
+  selectTodoList(0);
+}
+
+/** this function is going to load data from firebase to local store */
+export function ChangeToDoList(index: number) {
+  selectTodoList(index);
+  return <Navigate to="/"></Navigate>;
+}
+
 /**
  * this function do ...
  */
 export default function Home() {
   const { uid } = useStore(SubscribeStore);
-  const { listTodoList,idTodoList,todolistName,reponsible } = useStore(todolistStore);
+  const { listTodoList, idTodoList, todolistName, reponsible } =
+    useStore(todolistStore);
+
+  if (idTodoList < 0) {
+    InitData();
+  }
 
   if (!uid) {
     return <Navigate to="/Login"></Navigate>;
@@ -71,14 +91,22 @@ export default function Home() {
     <>
       <HomeContainer>
         <Title>Mes Todos : {idTodoList}</Title>
-        <p>{todolistName} {reponsible}</p>
+        <p>
+          {todolistName} {reponsible}
+        </p>
         <ul>
           {listTodoList.map((TodoList: Ttodolist, index: number) => (
-            <li key={index} onClick={() => selectTodoList(index)}>
-              {DisplayTodoList(TodoList.todolistName,TodoList.reponsible,index)}
+            <li key={index} onClick={() => ChangeToDoList(index)}>
+              {DisplayTodoList(
+                TodoList.todolistName,
+                TodoList.reponsible,
+                index
+              )}
             </li>
           ))}
         </ul>
+
+        {NewTodoList()}
       </HomeContainer>
     </>
   );

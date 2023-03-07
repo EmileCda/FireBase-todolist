@@ -46,15 +46,15 @@ export const todolistStore = map<TTodolistStore>({
   todolistName: "",
   reponsible: "toto-resp",
   todoName: "",
-  idTodoList: -1,
+  idTodoList: 0,
   todolist: [],
-  listTodoList: [todo0,todo1,todo2],
+  listTodoList: [todo0, todo1, todo2],
 });
 
 /** this fonction is for adding a todolist into a list of todolist
  * a todolist must have a name and a responsible par default responsible is userlogged
  */
-export const AddListTodolist = action(
+export const addListTodolist = action(
   todolistStore,
   "AddListTodolist",
   // async (store) => {
@@ -80,7 +80,7 @@ export const AddListTodolist = action(
  * name should not be duplicate
  *
  */
-export const CheckTodoListName = action(
+export const checkTodoListName = action(
   todolistStore,
   "CheckTodoLitsName",
   (store, value: string) => {
@@ -92,7 +92,7 @@ export const CheckTodoListName = action(
  *
  *
  */
-export const CheckTodoResponsible = action(
+export const checkTodoResponsible = action(
   todolistStore,
   "CheckTodoLitsName",
   (store, value: string) => {
@@ -104,7 +104,7 @@ export const CheckTodoResponsible = action(
  *
  *
  */
-export const ChangeResponsible = action(
+export const changeResponsible = action(
   todolistStore,
   "ChangeResponsible",
   (store, value: string) => {
@@ -112,18 +112,22 @@ export const ChangeResponsible = action(
   }
 );
 
-export const AddTodo = action(todolistStore, "AddTodo", (store) => {
+export const addTodo = action(todolistStore, "AddTodo", (store) => {
   const { todoName, todolist } = store.get();
-  const newTodo = { todoName: todoName, isDone: false };
-  const newTodoList = [newTodo, ...todolist];
-  store.setKey("todolist", newTodoList);
+  if (todoName !== "") {
+    const newTodo = { todoName: todoName, isDone: false };
+    const newTodoList = [newTodo, ...todolist];
+    store.setKey("todolist", newTodoList);
+    store.setKey("todoName", "");
+    console.log("addTodo")
+  }
 });
 
 /** this function is going to check if the name for todo is correct
  * for the moment there is no check rule
  * later we can add some check rule like duplicate name etc.
  */
-export const CheckTodo = action(
+export const checkTodo = action(
   todolistStore,
   "CheckTodo",
   (store, value: string) => {
@@ -131,7 +135,7 @@ export const CheckTodo = action(
   }
 );
 
-export const ChangeTodo = action(
+export const changeTodo = action(
   todolistStore,
   "ChangeTodo",
   (store, value: string) => {
@@ -156,9 +160,8 @@ export const toggleTodoState = action(
         return todo;
       }
     });
-    console.log("toggleTodoState");
-
     store.setKey("todolist", myNewTodoList);
+    console.log("toggleTodoState");
   }
 );
 
@@ -189,6 +192,7 @@ export const deleteTodoList = action(
       }
     });
     store.setKey("listTodoList", myNewListTodoList);
+    console.log(`deleteTodoList : ${idTodoList}`);
   }
 );
 
