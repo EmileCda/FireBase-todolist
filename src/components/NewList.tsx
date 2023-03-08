@@ -2,7 +2,7 @@ import { useStore } from "@nanostores/react";
 import { Navigate } from "react-router";
 import { Link } from "react-router-dom";
 import { SubscribeStore } from "../store/Subscription.store";
-import { addListTodolist, checkTodoListName, resetRouteChange, todolistStore,  } from "../store/TodoList.store";
+import { addListTodolist, checkTodoListName,  todolistStore,  } from "../store/TodoList.store";
 
 import {
   IconContainer,
@@ -28,17 +28,17 @@ export default function NewList() {
   if (!uid) {
     return <Navigate to="/Login"></Navigate>;
   }
-  if (routeChange) {
-    return <Navigate to="/TodoList"></Navigate>;
-  }
+  // if (routeChange) {
+  //   return <Navigate to="/TodoList"></Navigate>;
+  // }
   return (
     <>
       <TitleContainer>
-        <Link to="/">
           <IconContainer>
+          <Link to="/">
             <i className="fa-solid fa-chevron-left"></i>
+            </Link>
           </IconContainer>
-        </Link>
         <TexteContainer>
           <Title>Nouvelle liste</Title>
         </TexteContainer>
@@ -60,8 +60,7 @@ export default function NewList() {
         name="todolistName"
         placeholder="Course du dimanche"
       />
-      {/* <Button onClick={NewTodoList}>Créer</Button> */}
-      <Button onClick={addListTodolist}>Créer</Button>
+      <Link to="/TodoList" onClick={addListTodolist}> <Button>Créer</Button></Link>
     </>
   );
 }

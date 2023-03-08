@@ -23,7 +23,6 @@ export type TTodolistStore = {
   todolist: Ttodo[];
   todoName: string;
   listTodoList: Ttodolist[];
-  routeChange: boolean;
 };
 
 const todo0: Ttodolist = {
@@ -51,7 +50,6 @@ export const todolistStore = map<TTodolistStore>({
   idTodoList: 0,
   todolist: [],
   listTodoList: [todo0, todo1, todo2],
-  routeChange: false,
 });
 
 /** this fonction is for adding a todolist into a list of todolist
@@ -77,7 +75,6 @@ export const addListTodolist = action(
     store.setKey("reponsible", reponsible);
     store.setKey("todolist", []);
     store.setKey("idTodoList", 0);
-    store.setKey("routeChange", true);
   }
 
   // const status = await addDoc(collection(firebaseDb, "tasks"), {
@@ -85,9 +82,6 @@ export const addListTodolist = action(
   // });
 );
 
-export const resetRouteChange = action(todolistStore, "resetRoute", (store) => {
-  store.setKey("routeChange", false);
-});
 
 /**this function is for checking if the new todolist name is valide
  * name should not be duplicate
@@ -126,13 +120,33 @@ export const changeResponsible = action(
 );
 
 export const addTodo = action(todolistStore, "AddTodo", (store) => {
-  const { todoName, todolist } = store.get();
+  const {
+    todoName,
+    todolist,
+    listTodoList,
+    idTodoList,
+    todolistName,
+    reponsible,
+  } = store.get();
   if (todoName !== "") {
-    const newTodo = { todoName: todoName, isDone: false };
-    const newTodoList = [newTodo, ...todolist];
-    store.setKey("todolist", newTodoList);
+    const newTodo: Ttodo = { todoName: todoName, isDone: false };
+    const newTabTodo: Ttodo[] = [newTodo, ...todolist];
+    store.setKey("todolist", newTabTodo);
     store.setKey("todoName", "");
-    console.log("addTodo");
+
+    const newTodoList: Ttodolist = {
+      todolistName: todolistName,
+      reponsible: reponsible,
+      todolist: newTabTodo,
+    };
+    const newListTodoList = listTodoList.map((TodoList, index: number) => {
+      if (idTodoList !== index) {
+        return TodoList;
+      } else {
+        return newTodoList;
+      }
+    });
+    store.setKey("listTodoList", newListTodoList);
   }
 });
 
@@ -161,7 +175,7 @@ export const toggleTodoState = action(
   todolistStore,
   "toggleTodoState",
   (store, idItem: number) => {
-    const { todolist } = store.get();
+    const { todolist,todolistName,reponsible ,listTodoList,idTodoList} = store.get();
     const myNewTodoList = todolist.map((todo, index) => {
       if (idItem === index) {
         const newTodo: Ttodo = {
@@ -174,7 +188,22 @@ export const toggleTodoState = action(
       }
     });
     store.setKey("todolist", myNewTodoList);
-    console.log("toggleTodoState");
+
+
+    const newTodoList: Ttodolist = {
+      todolistName: todolistName,
+      reponsible: reponsible,
+      todolist: myNewTodoList,
+    };
+    const newListTodoList = listTodoList.map((TodoList, index: number) => {
+      if (idTodoList !== index) {
+        return TodoList;
+      } else {
+        return newTodoList;
+      }
+    });
+    store.setKey("listTodoList", newListTodoList);
+
   }
 );
 
@@ -215,28 +244,18 @@ export const deleteTodoList = action(
 export const selectTodoList = action(
   todolistStore,
   "selectTodoList",
-  (store, idTodoList: number,event=null) => {
+  (store, idTodoList: number) => {
     const { listTodoList } = store.get();
     const myNewListTodoList = listTodoList.filter((todolist, index) => {
       if (idTodoList === index) {
-        store.setKey("todolistName", todolist.todolistName);
-        store.setKey("reponsible", todolist.reponsible);
-        store.setKey("todolist", todolist.todolist);
-        store.setKey("idTodoList", idTodoList);
-        store.setKey("routeChange", true);
-        
+        return todolist;
       }
     });
-    // store.setKey("routeChange", true);
-    // if (event){
-    //   event.stopPropagation();
-    // }
 
-    console.log("selectTodoList")
-
-      
-
-
-    
+    store.setKey("todolistName", myNewListTodoList[0].todolistName);
+    store.setKey("reponsible", myNewListTodoList[0].reponsible);
+    store.setKey("todolist", myNewListTodoList[0].todolist);
+    store.setKey("idTodoList", idTodoList);
+    store.setKey("routeChange", true);
   }
 );

@@ -8,11 +8,11 @@ import { IconContainer, TexteContainer, Title, TitleContainer } from "../style/N
 /**
  * this function do ...
  */
-export default function About() {
+export default function Profile() {
 
   return (
     <>
-   
+   <h1>Profile</h1>
     </>
   );
 }

@@ -1,4 +1,5 @@
 import { useStore } from "@nanostores/react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   addTodo,
@@ -23,7 +24,12 @@ import {
   UpperList,
   UserContainer,
 } from "../style/NewList.style";
-import { DisplayListTodo, Icone, Tododiv, TodoName } from "../style/TodoList.style";
+import {
+  DisplayListTodo,
+  Icone,
+  Tododiv,
+  TodoName,
+} from "../style/TodoList.style";
 
 export function DisplayTodo(todo: Ttodo) {}
 
@@ -31,25 +37,28 @@ export function DisplayTodo(todo: Ttodo) {}
  * this function do ...
  */
 export default function TodoList() {
-  const { todolistName, reponsible, todolist, todoName,idTodoList } =
+  const { todolistName, reponsible, todolist, todoName, idTodoList } =
     useStore(todolistStore);
-  resetRouteChange();
 
-  
-  if (todolistName==="")
-  {
-    selectTodoList(idTodoList)
+
+
+  if (todolistName === "") {
+    selectTodoList(idTodoList);
   }
+  // useEffect(() => {
+  //   resetRouteChange();
+  // }, []);
 
+     resetRouteChange();
 
   return (
     <>
       <TitleContainer>
-        <Link to="/">
           <IconContainer>
+          <Link to="/">
             <i className="fa-solid fa-chevron-left"></i>
-          </IconContainer>
         </Link>
+          </IconContainer>
         <TexteContainer>
           <Title>{todolistName}</Title>
         </TexteContainer>
