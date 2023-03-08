@@ -1,6 +1,13 @@
 import styled from "styled-components";
 import { AppTheme } from "./App.style";
 
+
+export const TodoListContainer = styled.div<{ isLoading: boolean }>`
+
+${(props) =>props.isLoading ? "cursor: wait;" : null }
+`;
+
+
 export const DisplayListTodo = styled.div`
   display: flex;
   flex-direction: column;

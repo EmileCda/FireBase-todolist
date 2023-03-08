@@ -17,6 +17,7 @@ export type Ttodolist = {
 };
 
 export type TTodolistStore = {
+  isLoading : boolean,
   todolistName: string;
   reponsible: string;
   idTodoList: number;
@@ -44,6 +45,7 @@ const todo2: Ttodolist = {
 };
 
 export const todolistStore = map<TTodolistStore>({
+  isLoading : false,
   todolistName: "",
   reponsible: "toto-resp",
   todoName: "",
@@ -58,30 +60,34 @@ export const todolistStore = map<TTodolistStore>({
 export const addListTodolist = action(
   todolistStore,
   "AddListTodolist",
-  // async (store) => {
-  (store) => {
+  async (store) => {
     const { todolistName, reponsible, listTodoList } = store.get();
-
+    store.setKey("isLoading",true) ;
     const myNewTodoList: Ttodolist = {
       todolistName: todolistName,
       reponsible: reponsible,
       todolist: [],
     };
-    const newListTodo = [myNewTodoList, ...listTodoList];
+    const newListTodoList = [myNewTodoList, ...listTodoList];
 
-    store.setKey("listTodoList", newListTodo);
+    store.setKey("listTodoList", newListTodoList);
 
     store.setKey("todolistName", todolistName);
     store.setKey("reponsible", reponsible);
     store.setKey("todolist", []);
     store.setKey("idTodoList", 0);
+
+    const myDoc = collection(firebaseDb, "TodoLists");
+    newListTodoList.map(async (oneTodoList) => {
+      const status = await addDoc(myDoc, {
+        oneTodoList,
+      });
+    });
+    store.setKey("isLoading",false) ;
+
   }
 
-  // const status = await addDoc(collection(firebaseDb, "tasks"), {
-  //   todolist: newListTodo,
-  // });
 );
-
 
 /**this function is for checking if the new todolist name is valide
  * name should not be duplicate
@@ -120,6 +126,8 @@ export const changeResponsible = action(
 );
 
 export const addTodo = action(todolistStore, "AddTodo", (store) => {
+  store.setKey("isLoading",true) ;
+
   const {
     todoName,
     todolist,
@@ -147,6 +155,13 @@ export const addTodo = action(todolistStore, "AddTodo", (store) => {
       }
     });
     store.setKey("listTodoList", newListTodoList);
+    const myDoc = collection(firebaseDb, "TodoLists");
+    newListTodoList.map(async (oneTodoList) => {
+      const status = await addDoc(myDoc, {
+        oneTodoList,
+      });
+    });
+    store.setKey("isLoading",false) ;
   }
 });
 
@@ -175,7 +190,10 @@ export const toggleTodoState = action(
   todolistStore,
   "toggleTodoState",
   (store, idItem: number) => {
-    const { todolist,todolistName,reponsible ,listTodoList,idTodoList} = store.get();
+    store.setKey("isLoading",true) ;
+
+    const { todolist, todolistName, reponsible, listTodoList, idTodoList } =
+      store.get();
     const myNewTodoList = todolist.map((todo, index) => {
       if (idItem === index) {
         const newTodo: Ttodo = {
@@ -188,7 +206,6 @@ export const toggleTodoState = action(
       }
     });
     store.setKey("todolist", myNewTodoList);
-
 
     const newTodoList: Ttodolist = {
       todolistName: todolistName,
@@ -203,7 +220,13 @@ export const toggleTodoState = action(
       }
     });
     store.setKey("listTodoList", newListTodoList);
-
+    const myDoc = collection(firebaseDb, "TodoLists");
+    newListTodoList.map(async (oneTodoList) => {
+      const status = await addDoc(myDoc, {
+        oneTodoList,
+      });
+    });
+    store.setKey("isLoading",false) ;
   }
 );
 
@@ -212,13 +235,35 @@ export const deleteTodo = action(
   todolistStore,
   "deleteTodo",
   (store, idItem: number) => {
-    const { todolist } = store.get();
+    store.setKey("isLoading",true) ;
+    const { todolist ,todolistName,reponsible,idTodoList,listTodoList} = store.get();
     const myNewTodoList = todolist.filter((todo, index) => {
       if (idItem !== index) {
         return todo;
       }
     });
     store.setKey("todolist", myNewTodoList);
+    const newTodoList: Ttodolist = {
+      todolistName: todolistName,
+      reponsible: reponsible,
+      todolist: myNewTodoList,
+    };
+    const newListTodoList = listTodoList.map((TodoList, index: number) => {
+      if (idTodoList !== index) {
+        return TodoList;
+      } else {
+        return newTodoList;
+      }
+    });
+
+    store.setKey("listTodoList", newListTodoList);
+    const myDoc = collection(firebaseDb, "TodoLists");
+    newListTodoList.map(async (oneTodoList) => {
+      const status = await addDoc(myDoc, {
+        oneTodoList,
+      });
+    });
+    store.setKey("isLoading",false) ;
   }
 );
 
@@ -227,14 +272,22 @@ export const deleteTodoList = action(
   todolistStore,
   "deleteTodoList",
   (store, idTodoList: number) => {
+    store.setKey("isLoading",true) ;
+
     const { listTodoList } = store.get();
-    const myNewListTodoList = listTodoList.filter((todolist, index) => {
+    const newListTodoList = listTodoList.filter((todolist, index) => {
       if (idTodoList !== index) {
         return todolist;
       }
     });
-    store.setKey("listTodoList", myNewListTodoList);
-    console.log(`deleteTodoList : ${idTodoList}`);
+    store.setKey("listTodoList", newListTodoList);
+    const myDoc = collection(firebaseDb, "TodoLists");
+    newListTodoList.map(async (oneTodoList) => {
+      const status = await addDoc(myDoc, {
+        oneTodoList,
+      });
+    });
+    store.setKey("isLoading",false) ;
   }
 );
 
@@ -256,6 +309,5 @@ export const selectTodoList = action(
     store.setKey("reponsible", myNewListTodoList[0].reponsible);
     store.setKey("todolist", myNewListTodoList[0].todolist);
     store.setKey("idTodoList", idTodoList);
-    store.setKey("routeChange", true);
   }
 );

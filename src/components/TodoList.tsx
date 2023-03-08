@@ -5,7 +5,6 @@ import {
   addTodo,
   checkTodo,
   deleteTodo,
-  resetRouteChange,
   selectTodoList,
   todolistStore,
   toggleTodoState,
@@ -28,6 +27,7 @@ import {
   DisplayListTodo,
   Icone,
   Tododiv,
+  TodoListContainer,
   TodoName,
 } from "../style/TodoList.style";
 
@@ -37,22 +37,16 @@ export function DisplayTodo(todo: Ttodo) {}
  * this function do ...
  */
 export default function TodoList() {
-  const { todolistName, reponsible, todolist, todoName, idTodoList } =
+  const { todolistName, reponsible, todolist, todoName, idTodoList,isLoading } =
     useStore(todolistStore);
-
-
 
   if (todolistName === "") {
     selectTodoList(idTodoList);
   }
-  // useEffect(() => {
-  //   resetRouteChange();
-  // }, []);
-
-     resetRouteChange();
 
   return (
     <>
+    <TodoListContainer isLoading={isLoading}>
       <TitleContainer>
           <IconContainer>
           <Link to="/">
@@ -96,6 +90,7 @@ export default function TodoList() {
           ))}
         </ul>
       </DisplayListTodo>
+      </TodoListContainer>
     </>
   );
 }

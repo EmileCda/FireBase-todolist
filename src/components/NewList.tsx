@@ -23,7 +23,7 @@ import {
  */
 export default function NewList() {
   const { uid } = useStore(SubscribeStore);
-  const { reponsible,routeChange } = useStore(todolistStore);
+  const { reponsible } = useStore(todolistStore);
 
   if (!uid) {
     return <Navigate to="/Login"></Navigate>;

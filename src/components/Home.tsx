@@ -6,7 +6,6 @@ import { RenderErrorBoundary } from "react-router/dist/lib/hooks";
 import { toggleUser } from "../store/Menu.store";
 import { SubscribeStore } from "../store/Subscription.store";
 import {
-  resetRouteChange,
   selectTodoList,
   todolistStore,
   Ttodolist,
@@ -91,7 +90,7 @@ export function ChangeToDoList(
  */
 export default function Home() {
   const { uid } = useStore(SubscribeStore);
-  const { listTodoList, idTodoList, todolistName, reponsible, routeChange } =
+  const { listTodoList, idTodoList } =
     useStore(todolistStore);
 
   if (idTodoList < 0) {
