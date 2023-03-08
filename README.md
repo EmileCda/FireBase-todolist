@@ -2,7 +2,11 @@
 
 lun. 06 mars 2023 11:21:57 CET
 
-![Logo projet Firebase todo list](./src/image/Firebase-todolist.png)
+<img src="./src/image/Firebase-todolist.png" alt="Logo projet Firebase todo list" width="200"/>
+
+**_Schéma réactif pour mémoire_**
+
+![Schéma réactif pour mémoire](./doc/image/Nanostores.png)
 
 # Installation
 
@@ -29,7 +33,10 @@ npm install
 src-->main  
 |---component  
  |---style  
- |---store
+ |---store  
+|---type  
+|---lib  
+|---image
 
 # création du compte sur firebase google
 

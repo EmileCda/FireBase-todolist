@@ -1,6 +1,6 @@
 import { useStore } from "@nanostores/react";
 import { Navigate } from "react-router";
-import { toggleUser } from "../store/Menu.store";
+import {  toggleUser } from "../store/Menu.store";
 import { SubscribeStore } from "../store/Subscription.store";
 import {
   selectTodoList,
@@ -29,8 +29,9 @@ export function DisplayTodoList(
   const { listTodoList } = useStore(todolistStore);
   return (
     <>
-      <TodoList onClick={() => selectTodoList(id)}>
-        <UpperList onClick={toggleUser}>
+      <TodoList onClick={(event) => selectTodoList(id,event)}>
+      {/* <UpperList onClick={(e) => toggleUser(e)}> */}
+      <UpperList >
           <IconUser>
             <i className="fa-solid fa-user"></i>
           </IconUser>
@@ -67,9 +68,10 @@ export function InitData() {
 }
 
 /** this function is going to load data from firebase to local store */
-export function ChangeToDoList(index: number) {
+export function ChangeToDoList(event: React.MouseEvent<HTMLLIElement, MouseEvent>, index: number) {
   selectTodoList(index);
-  return <Navigate to="/"></Navigate>;
+  // event.stopPropagation();
+  // return <Navigate to="/"></Navigate>;
 }
 
 /**
@@ -77,26 +79,30 @@ export function ChangeToDoList(index: number) {
  */
 export default function Home() {
   const { uid } = useStore(SubscribeStore);
-  const { listTodoList, idTodoList, todolistName, reponsible } =
+  const { listTodoList, idTodoList, todolistName, reponsible, routeChange } =
     useStore(todolistStore);
-
+  
   if (idTodoList < 0) {
     InitData();
   }
 
   if (!uid) {
-    return <Navigate to="/Login"></Navigate>;
+    return <Navigate to="/Login" />
+
+  }
+  if (routeChange) {
+    return <Navigate to="/TodoList" />
   }
   return (
     <>
       <HomeContainer>
-        <Title>Mes Todos : {idTodoList}</Title>
+        <Title>Mes Todos : {idTodoList} {routeChange ? "true" : "false"} </Title>
         <p>
           {todolistName} {reponsible}
         </p>
         <ul>
           {listTodoList.map((TodoList: Ttodolist, index: number) => (
-            <li key={index} onClick={() => ChangeToDoList(index)}>
+            <li key={index} onClick={(event) => ChangeToDoList(event,index)}>
               {DisplayTodoList(
                 TodoList.todolistName,
                 TodoList.reponsible,

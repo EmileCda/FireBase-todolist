@@ -16,9 +16,11 @@ import { Button } from "../style/Subscription.style";
 
 export default function Subscription() {
   const { userLogged, uid, isSending } = useStore(SubscribeStore);
+  
 
   if (uid) {
     return <Navigate to="/"></Navigate>;
+
   }
 
   return (

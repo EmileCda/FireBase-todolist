@@ -21,6 +21,8 @@ export default function Login() {
 
   if (uid) {
     return <Navigate to="/"></Navigate>;
+
+
   }
   return (
     <>

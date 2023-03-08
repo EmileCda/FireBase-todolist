@@ -4,6 +4,8 @@ import {
   addTodo,
   checkTodo,
   deleteTodo,
+  resetRouteChange,
+  selectTodoList,
   todolistStore,
   toggleTodoState,
   Ttodo,
@@ -21,7 +23,7 @@ import {
   UpperList,
   UserContainer,
 } from "../style/NewList.style";
-import { DisplayListTodo, Icone, Tododiv } from "../style/TodoList.style";
+import { DisplayListTodo, Icone, Tododiv, TodoName } from "../style/TodoList.style";
 
 export function DisplayTodo(todo: Ttodo) {}
 
@@ -29,8 +31,17 @@ export function DisplayTodo(todo: Ttodo) {}
  * this function do ...
  */
 export default function TodoList() {
-  const { todolistName, reponsible, todolist, todoName } =
+  const { todolistName, reponsible, todolist, todoName,idTodoList } =
     useStore(todolistStore);
+  resetRouteChange();
+
+  
+  if (todolistName==="")
+  {
+    selectTodoList(idTodoList)
+  }
+
+
   return (
     <>
       <TitleContainer>
@@ -67,7 +78,7 @@ export default function TodoList() {
           {todolist.map((item: Ttodo, index) => (
             <li key={index} onClick={() => toggleTodoState(index)}>
               <Tododiv isClicked={item.isDone}>
-                <div>{item.todoName}</div>
+                <TodoName>{item.todoName}</TodoName>
                 <Icone onClick={() => deleteTodo(index)}>
                   <i className="fa-sharp fa-solid fa-trash"></i>
                 </Icone>

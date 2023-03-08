@@ -1,6 +1,9 @@
+import { useStore } from "@nanostores/react";
 import { StrictMode } from "react";
-import { BrowserRouter,  Route,  Routes } from "react-router-dom";
+import { BrowserRouter,  Navigate,  Route,  Routes } from "react-router-dom";
+import { MenuStore } from "../store/Menu.store";
 import { AppGlobalStyle} from "../style/App.style";
+import About from "./About";
 import Home from "./Home";
 import Login from "./Login";
 import Menu from "./Menu";
@@ -15,16 +18,6 @@ import TodoList from "./TodoList";
  *
  */
 export default function App() {
-  // STATE : useState
-
-
-  // ACTIONS
-
-  //     setTimming (timming.push(performance))
-
-  //   // EFFET : useEffect : counter
-    // case isStarted === true
-
 
   return (
 <StrictMode>
@@ -35,10 +28,12 @@ export default function App() {
             <Route path="/Subscription" element={<Subscription />} />
             <Route path="/NewList" element={<NewList />} />
             <Route path="/TodoList" element={<TodoList />} />
-            <Route path="/outputTest" element={<OutputTest />} />
+            <Route path="/OutputTest" element={<OutputTest />} />
             <Route path="/Login" element={<Login />} />
+            <Route path="/About" element={<About />} />
           </Routes>
           <Menu />
+
       </BrowserRouter>
     </StrictMode>  );
 }

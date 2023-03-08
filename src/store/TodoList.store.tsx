@@ -1,6 +1,7 @@
 /** this store is to manage list of todolist */
 
 import { addDoc, collection } from "@firebase/firestore";
+import { useStore } from "@nanostores/react";
 import { action, map } from "nanostores";
 import { firebaseDb } from "../lib/Firebase";
 
@@ -22,6 +23,7 @@ export type TTodolistStore = {
   todolist: Ttodo[];
   todoName: string;
   listTodoList: Ttodolist[];
+  routeChange: boolean;
 };
 
 const todo0: Ttodolist = {
@@ -49,6 +51,7 @@ export const todolistStore = map<TTodolistStore>({
   idTodoList: 0,
   todolist: [],
   listTodoList: [todo0, todo1, todo2],
+  routeChange: false,
 });
 
 /** this fonction is for adding a todolist into a list of todolist
@@ -59,22 +62,32 @@ export const addListTodolist = action(
   "AddListTodolist",
   // async (store) => {
   (store) => {
-    const { todolist, todolistName, reponsible, listTodoList } = store.get();
+    const { todolistName, reponsible, listTodoList } = store.get();
 
     const myNewTodoList: Ttodolist = {
       todolistName: todolistName,
       reponsible: reponsible,
-      todolist: todolist,
+      todolist: [],
     };
     const newListTodo = [myNewTodoList, ...listTodoList];
 
     store.setKey("listTodoList", newListTodo);
 
-    // const status = await addDoc(collection(firebaseDb, "tasks"), {
-    //   todolist: newListTodo,
-    // });
+    store.setKey("todolistName", todolistName);
+    store.setKey("reponsible", reponsible);
+    store.setKey("todolist", []);
+    store.setKey("idTodoList", 0);
+    store.setKey("routeChange", true);
   }
+
+  // const status = await addDoc(collection(firebaseDb, "tasks"), {
+  //   todolist: newListTodo,
+  // });
 );
+
+export const resetRouteChange = action(todolistStore, "resetRoute", (store) => {
+  store.setKey("routeChange", false);
+});
 
 /**this function is for checking if the new todolist name is valide
  * name should not be duplicate
@@ -119,7 +132,7 @@ export const addTodo = action(todolistStore, "AddTodo", (store) => {
     const newTodoList = [newTodo, ...todolist];
     store.setKey("todolist", newTodoList);
     store.setKey("todoName", "");
-    console.log("addTodo")
+    console.log("addTodo");
   }
 });
 
@@ -202,7 +215,7 @@ export const deleteTodoList = action(
 export const selectTodoList = action(
   todolistStore,
   "selectTodoList",
-  (store, idTodoList: number) => {
+  (store, idTodoList: number,event=null) => {
     const { listTodoList } = store.get();
     const myNewListTodoList = listTodoList.filter((todolist, index) => {
       if (idTodoList === index) {
@@ -210,8 +223,20 @@ export const selectTodoList = action(
         store.setKey("reponsible", todolist.reponsible);
         store.setKey("todolist", todolist.todolist);
         store.setKey("idTodoList", idTodoList);
-        idTodoList;
+        store.setKey("routeChange", true);
+        
       }
     });
+    // store.setKey("routeChange", true);
+    // if (event){
+    //   event.stopPropagation();
+    // }
+
+    console.log("selectTodoList")
+
+      
+
+
+    
   }
 );

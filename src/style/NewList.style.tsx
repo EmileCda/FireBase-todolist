@@ -29,6 +29,7 @@ export const Title = styled.div`
   font-family: ${AppTheme.font.extra};
   font-size: 2rem;
   color: ${AppTheme.colors.light};
+  text-align: center;
 `;
 
 export const UpperList = styled.div`
