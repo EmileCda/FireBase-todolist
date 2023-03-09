@@ -4,8 +4,11 @@ import { Navigate } from "react-router";
 import { firebaseDb } from "../lib/Firebase";
 import { SubscribeStore } from "../store/Subscription.store";
 import {
+  resetIsDownLoad,
   selectTodoList,
+  setIsDownLoad,
   setListTodoList,
+  setResponsible,
   setUid,
   todoListCollection,
   todolistStore,
@@ -26,26 +29,24 @@ import {
   UpperList,
 } from "../style/Home.style";
 
-export function testTiti(id: number) {
-  console.log(id);
-}
+
+// ----------------------------------------------------------
 
 export type DisplayTodoListProp = {
   listName: string;
   responsible: string;
-  id: number;
 };
 
+/** display one todo defined by a name and a responsible 
+*/
+// ----------------------------------------------------------
 export function DisplayTodoList({
   listName,
   responsible,
-  id,
 }: DisplayTodoListProp) {
   return (
     <>
-      <TodoList onClick={() => testTiti(id)}>
-        {/* <TodoList onClick={() => selectTodoList(id)}> */}
-        {/* <UpperList onClick={(e) => toggleUser(e)}> */}
+      <TodoList>
         <UpperList>
           <IconUser>
             <i className="fa-solid fa-user"></i>
@@ -61,6 +62,10 @@ export function DisplayTodoList({
   );
 }
 
+// ----------------------------------------------------------
+/** Display a push button for adding a new todoList
+ *
+ */
 export function NewTodoList() {
   return (
     <>
@@ -76,60 +81,55 @@ export function NewTodoList() {
   );
 }
 
-/** this function is going to load data from firebase to local store */
-export async function InitData() {
-  const { uid } = useStore(SubscribeStore);
-
-  const myDoc = doc(firebaseDb, todoListCollection, uid);
-  const myDocSnapshot = await getDoc(myDoc);
-
-  if (myDocSnapshot.exists()) {
-    const myData = myDocSnapshot.data();
-    // setListTodoList(myDocSnapshot.data().newListTodoList, uid);
-  }
-}
-
-/** this function is going to load data from firebase to local store */
-export function ChangeToDoList(
-  event: React.MouseEvent<HTMLLIElement, MouseEvent>,
-  index: number
-) {
+// ----------------------------------------------------------
+/** this function is going to select one todolist among the list of todolist
+ *
+ * */
+export function ChangeToDoList(index: number) {
   selectTodoList(index);
 }
 
+// ----------------------------------------------------------
 /**
  * this function display all todolist and at the end a pushbutton indor to create new yodolist
  */
+
 export default function Home() {
-  const { uid } = useStore(SubscribeStore);
-  const { listTodoList, idTodoList } = useStore(todolistStore);
+  const { uid, email } = useStore(SubscribeStore);
+  const { listTodoList, isDownLoad } = useStore(todolistStore);
 
-  if (idTodoList < 0) {
-    setListTodoList()
-  }
-
-  if (!uid) {
+  if (parseInt(uid)<0) {
+    // if not connected redirect to login screen
     return <Navigate to="/Login" />;
   }
-  setUid(uid);
-  return (
+  setUid(uid); // trick to have UID in todolistStore
+  setResponsible(email.substring(0, email.lastIndexOf("@")));
+
+  
+  if (!isDownLoad ) {
+    setListTodoList(); // load list of todolist from firebase
+    
+    setIsDownLoad();
+
+  }
+
+
+    return (
     <>
       <HomeContainer>
         <Title>Mes Todos</Title>
         <ul>
-          {listTodoList.map((TodoList: Ttodolist, index: number) => (
-            <li key={index} onClick={(event) => ChangeToDoList(event, index)}>
+          {listTodoList.map((todoList: Ttodolist, index: number) => (
+            <li key={index} onClick={() => ChangeToDoList(index)}>
               <MyLink to="/TodoList">
                 <DisplayTodoList
-                  listName={TodoList.todolistName}
-                  responsible={TodoList.reponsible}
-                  id={index}
+                  listName={todoList.todolistName}
+                  responsible={todoList.responsible}
                 />
               </MyLink>
             </li>
           ))}
         </ul>
-
         <NewTodoList />
       </HomeContainer>
     </>

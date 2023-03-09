@@ -79,15 +79,6 @@ export const UserContainer = styled.div`
 `;
 
 
-export const Button = styled.button`
-  background-color  : ${AppTheme.colors.medium};
-  color  : ${AppTheme.colors.light};
-  cursor: wait;
-  padding: ${AppTheme.BorderRadius};
-  min-width: 10rem;
-  border-radius: ${AppTheme.BorderRadius};
-  margin: 0  ${AppTheme.BorderRadius};
-`;
 export const Input = styled.input`
 background-color  : ${AppTheme.colors.light};
 padding: ${AppTheme.BorderRadius};

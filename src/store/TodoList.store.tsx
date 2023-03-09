@@ -1,6 +1,6 @@
 /** this store is to manage list of todolist */
 
-import { addDoc, collection, doc, getDoc, setDoc } from "@firebase/firestore";
+import {  collection, doc, getDoc, setDoc } from "@firebase/firestore";
 import { useStore } from "@nanostores/react";
 import { action, map } from "nanostores";
 import { firebaseDb } from "../lib/Firebase";
@@ -15,44 +15,46 @@ export type Ttodo = {
 
 export type Ttodolist = {
   todolistName: string;
-  reponsible: string;
+  responsible: string;
   todolist: Ttodo[];
 };
 
 export type TTodolistStore = {
-  isLoading: boolean;
-  uid: string;
-  todolistName: string;
-  reponsible: string;
-  idTodoList: number;
-  todolist: Ttodo[];
+  isDownLoad: boolean,
+  isLoading: boolean,
+  uid: string,
+  todolistName: string,
+  responsible: string,
+  idTodoList: number,
+  todolist: Ttodo[],
   todoName: string;
-  listTodoList: Ttodolist[];
+  listTodoList: Ttodolist[],
 };
 
 const todo0: Ttodolist = {
   todolistName: "course 0",
-  reponsible: "kours-man",
+  responsible: "kours-man",
   todolist: [],
 };
 
 const todo1: Ttodolist = {
   todolistName: "bricolage 2",
-  reponsible: "brikoman",
+  responsible: "brikoman",
   todolist: [],
 };
 
 const todo2: Ttodolist = {
   todolistName: "ménage",
-  reponsible: "MénaMan",
+  responsible: "MénaMan",
   todolist: [],
 };
 
 export const todolistStore = map<TTodolistStore>({
+  isDownLoad: false,
   isLoading: false,
-  uid: "",
+  uid: "-1",
   todolistName: "",
-  reponsible: "toto-resp",
+  responsible: "toto-resp",
   todoName: "",
   idTodoList: -1,
   todolist: [],
@@ -68,37 +70,101 @@ export const setUid = action(
   }
 );
 
+
+
+/** setter for responsible
+ * 
+ * */
+export const resetTodolistStore= action( todolistStore,"resetStore",(store) => {
+
+  store.setKey("isDownLoad",false);
+  store.setKey("isLoading",false);
+  store.setKey("uid","-1");
+  store.setKey("todolistName","");
+  store.setKey("responsible","toto-resp");
+  store.setKey("todoName","");
+  store.setKey("idTodoList",-1);
+  store.setKey("todolist",[]);
+  
+})
+
+
+/** setter for responsible
+ * 
+ * */
+export const setResponsible= action( todolistStore,"initStore",(store,value) => {
+
+  store.setKey("responsible",value);
+})
+
+
+/** setter for responsible
+ * 
+ * */
+export const resetIsDownLoad= action( todolistStore,"resetIsDownLoad",(store) => {
+
+  store.setKey("isDownLoad",false);
+})
+/** setter for responsible
+ * 
+ * */
+export const setIsDownLoad= action( todolistStore,"resetIsDownLoad",(store) => {
+
+  store.setKey("isDownLoad",true);
+})
+
+/** this function initialyse all store data 
+ * 
+ * */
+export const initStore= action( todolistStore,"initStore",(store) => {
+
+  store.setKey("listTodoList", []);
+  store.setKey("todolist", []);
+  store.setKey("todolistName","");
+  store.setKey("idTodoList", -1);
+
+})
+
 /** this function load data from parameter to data store */
 export const setListTodoList = action(
   todolistStore,
   "setListTodoList",
   async (store) => {
-    store.setKey("isLoading", true);
-    const { uid } = store.get();
-    const todolistCollection = collection(firebaseDb, todoListCollection);
+    const {uid}= useStore(SubscribeStore);
+  
+    const { listTodoList } = store.get();
+    if (uid){
+      const todolistCollection = collection(firebaseDb, todoListCollection);
 
-    const myDoc = doc(todolistCollection, uid);
-    console.log("avant");
-    const myDocSnapshot = await getDoc(myDoc);
-    console.log("apres");
+      const myDoc = doc(todolistCollection, uid);
+      const myDocSnapshot = await getDoc(myDoc);
 
-    if (myDocSnapshot.exists()) {
-      const myData = myDocSnapshot.data();
-      const indexinit = 0;
-      console.log(myData);
-      store.setKey("listTodoList", myData.newListTodoList);
-      store.setKey("todolist", myData.newListTodoList[indexinit].todolist);
-      store.setKey(
-        "todolistName",
-        myData.newListTodoList[indexinit].todolistName
-      );
-      store.setKey("reponsible", myData.newListTodoList[indexinit].reponsible);
-      store.setKey("idTodoList", indexinit);
-    } else {
-      // not data exist
-      store.setKey("idTodoList", 0);
+      
+      if (myDocSnapshot.exists()) {
+        const myData = myDocSnapshot.data();
+        const indexinit = 0;
+        const loadListTodoList = myData.todoLists;
+        if (loadListTodoList.length > 0){
+          store.setKey("listTodoList", loadListTodoList);
+          store.setKey("todolist", loadListTodoList[indexinit].todolist);
+          store.setKey(
+            "todolistName",
+            loadListTodoList[indexinit].todolistName
+          );
+          store.setKey("idTodoList", indexinit);
+  
+        }
+        else{
+          initStore();
+        }
+      } else {
+        // not data exist; initStore in case of information from the last user
+        initStore();
+      }
+  
     }
-
+    
+    
     store.setKey("isLoading", false);
   }
 );
@@ -112,26 +178,28 @@ export const addListTodolist = action(
   "AddListTodolist",
   async (store) => {
     store.setKey("isLoading", true);
-    const { todolistName, reponsible, listTodoList, uid } = store.get();
+    const { todolistName, responsible, listTodoList, uid } = store.get();
     const myNewTodoList: Ttodolist = {
       todolistName: todolistName,
-      reponsible: reponsible,
+      responsible: responsible,
       todolist: [],
     };
-    const newListTodoList = [myNewTodoList, ...listTodoList];
+    const todoLists = [myNewTodoList, ...listTodoList];
 
-    store.setKey("listTodoList", newListTodoList);
+    store.setKey("listTodoList", todoLists);
 
     store.setKey("todolistName", todolistName);
-    store.setKey("reponsible", reponsible);
     store.setKey("todolist", []);
     store.setKey("idTodoList", 0);
 
     const myDoc = doc(firebaseDb, todoListCollection, uid);
-    const status = await setDoc(myDoc, { newListTodoList });
+    const status = await setDoc(myDoc, { todoLists });
     store.setKey("isLoading", false);
   }
 );
+
+
+
 
 /**this function is for checking if the new todolist name is valide
  * name should not be duplicate
@@ -145,30 +213,6 @@ export const checkTodoListName = action(
   }
 );
 
-/**this function is for checking if the new todolist reponsible is valide
- *
- *
- */
-export const checkTodoResponsible = action(
-  todolistStore,
-  "CheckTodoLitsName",
-  (store, value: string) => {
-    store.setKey("reponsible", value);
-  }
-);
-
-/**this function is for changing reponsible for todolist
- *
- *
- */
-export const changeResponsible = action(
-  todolistStore,
-  "ChangeResponsible",
-  (store, value: string) => {
-    store.setKey("reponsible", value);
-  }
-);
-
 export const addTodo = action(todolistStore, "AddTodo", async (store) => {
   store.setKey("isLoading", true);
 
@@ -178,7 +222,7 @@ export const addTodo = action(todolistStore, "AddTodo", async (store) => {
     listTodoList,
     idTodoList,
     todolistName,
-    reponsible,
+    responsible,
     uid,
   } = store.get();
   if (todoName !== "") {
@@ -189,19 +233,19 @@ export const addTodo = action(todolistStore, "AddTodo", async (store) => {
 
     const newTodoList: Ttodolist = {
       todolistName: todolistName,
-      reponsible: reponsible,
+      responsible: responsible,
       todolist: newTabTodo,
     };
-    const newListTodoList = listTodoList.map((TodoList, index: number) => {
+    const todoLists = listTodoList.map((TodoList, index: number) => {
       if (idTodoList !== index) {
         return TodoList;
       } else {
         return newTodoList;
       }
     });
-    store.setKey("listTodoList", newListTodoList);
+    store.setKey("listTodoList", todoLists);
     const myDoc = doc(firebaseDb, todoListCollection, uid);
-    const status = await setDoc(myDoc, { newListTodoList });
+    const status = await setDoc(myDoc, { todoLists });
   }
   store.setKey("isLoading", false);
 });
@@ -236,7 +280,7 @@ export const toggleTodoState = action(
     const {
       todolist,
       todolistName,
-      reponsible,
+      responsible,
       listTodoList,
       idTodoList,
       uid,
@@ -256,19 +300,19 @@ export const toggleTodoState = action(
 
     const newTodoList: Ttodolist = {
       todolistName: todolistName,
-      reponsible: reponsible,
+      responsible: responsible,
       todolist: myNewTodoList,
     };
-    const newListTodoList = listTodoList.map((TodoList, index: number) => {
+    const todoLists = listTodoList.map((TodoList, index: number) => {
       if (idTodoList !== index) {
         return TodoList;
       } else {
         return newTodoList;
       }
     });
-    store.setKey("listTodoList", newListTodoList);
+    store.setKey("listTodoList", todoLists);
     const myDoc = doc(firebaseDb, todoListCollection, uid);
-    const status = await setDoc(myDoc, { newListTodoList });
+    const status = await setDoc(myDoc, { todoLists });
 
     store.setKey("isLoading", false);
   }
@@ -283,7 +327,7 @@ export const deleteTodo = action(
     const {
       todolist,
       todolistName,
-      reponsible,
+      responsible,
       idTodoList,
       listTodoList,
       uid,
@@ -300,12 +344,12 @@ export const deleteTodo = action(
     store.setKey("todolist", myNewTodoList);
     const newTodoList: Ttodolist = {
       todolistName: todolistName,
-      reponsible: reponsible,
+      responsible: responsible,
       todolist: myNewTodoList,
     };
 
-    // newListTodoList is the whole list-of-todolist we just exchange the todolist newly with update
-    const newListTodoList = listTodoList.map((TodoList, index: number) => {
+    // todoLists is the whole list-of-todolist we just exchange the todolist newly with update
+    const todoLists = listTodoList.map((TodoList, index: number) => {
       if (idTodoList !== index) {
         return TodoList;
       } else {
@@ -314,31 +358,32 @@ export const deleteTodo = action(
     });
 
     // Finnaly we store the list-of-todolist with todo changed
-    store.setKey("listTodoList", newListTodoList);
+    store.setKey("listTodoList", todoLists);
     const myDoc = doc(firebaseDb, todoListCollection, uid);
-    const status = await setDoc(myDoc, { newListTodoList });
+    const status = await setDoc(myDoc, { todoLists });
 
     store.setKey("isLoading", false);
   }
 );
 
 /** this functin toggle the current */
-export const deleteTodoList = action(
+export const deleteCurrentTodoList = action(
   todolistStore,
-  "deleteTodoList",
-  async (store, idTodoList: number) => {
+  "deleteCurrentTodoList",
+  async (store) => {
     store.setKey("isLoading", true);
 
-    const { listTodoList, uid } = store.get();
-    const myNewListTodoList = listTodoList.filter((todolist, index) => {
+    const { listTodoList, uid,idTodoList } = store.get();
+    const todoLists = listTodoList.filter((todolist, index) => {
       if (idTodoList !== index) {
         return todolist;
       }
     });
-    store.setKey("listTodoList", myNewListTodoList);
+    store.setKey("listTodoList", todoLists);
+    store.setKey("idTodoList", -1);
 
     const myDoc = doc(firebaseDb, todoListCollection, uid);
-    const status = await setDoc(myDoc, { myNewListTodoList });
+    const status = await setDoc(myDoc, { todoLists });
   }
 );
 
@@ -350,16 +395,16 @@ export const selectTodoList = action(
   "selectTodoList",
   (store, idTodoList: number) => {
     const { listTodoList } = store.get();
-    const myNewListTodoList = listTodoList.filter((todolist, index) => {
+    const todoLists = listTodoList.filter((todolist, index) => {
       if (idTodoList === index) {
         return todolist;
       }
     });
 
-    if (myNewListTodoList.length > 0) {
-      store.setKey("todolistName", myNewListTodoList[0].todolistName);
-      store.setKey("reponsible", myNewListTodoList[0].reponsible);
-      store.setKey("todolist", myNewListTodoList[0].todolist);
+    if (todoLists.length > 0) {
+      store.setKey("todolistName", todoLists[0].todolistName);
+      store.setKey("responsible", todoLists[0].responsible);
+      store.setKey("todolist", todoLists[0].todolist);
       store.setKey("idTodoList", idTodoList);
     }
   }

@@ -3,7 +3,7 @@ import { Navigate } from "react-router";
 
 import { SubscribeStore } from "../store/Subscription.store";
 import { addListTodolist, checkTodoListName,  setUid,  todolistStore,  } from "../store/TodoList.store";
-import { MyLink } from "../style/Common.style";
+import {  MyButton, MyLink } from "../style/Common.style";
 
 import {
   IconContainer,
@@ -14,7 +14,6 @@ import {
   IconUser,
   TextUser,
   UserContainer,
-  Button,
   Input,
 } from "../style/NewList.style";
 
@@ -24,7 +23,7 @@ import {
  */
 export default function NewList() {
   const { uid } = useStore(SubscribeStore);
-  const { reponsible } = useStore(todolistStore);
+  const { responsible, isLoading } = useStore(todolistStore);
 
   if (!uid) {
     return <Navigate to="/Login"></Navigate>;
@@ -50,7 +49,7 @@ export default function NewList() {
           </IconUser>
           <TextUser>
             <p>Par</p>
-            <p>{reponsible}</p>
+            <p>{responsible}</p>
           </TextUser>
         </UpperList>
       </UserContainer>
@@ -60,7 +59,7 @@ export default function NewList() {
         name="todolistName"
         placeholder="Course du dimanche"
       />
-      <MyLink to="/TodoList" onClick={addListTodolist}> <Button>Créer</Button></MyLink>
+      <MyLink to="/TodoList" onClick={addListTodolist}><MyButton isLoading={isLoading}> Créer</MyButton></MyLink>
     </>
   );
 }

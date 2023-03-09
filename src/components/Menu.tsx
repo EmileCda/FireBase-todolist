@@ -68,7 +68,6 @@ export function DisplayProfile() {
         </ProfileItem>
         <ProfileItem>
           <p>Changer votre mot de passe : </p>
-          <p>{name}</p>
         </ProfileItem>
       </ProfileContainer>
     </>

@@ -84,3 +84,6 @@ très impormat : le schéma réaction
 Composant-> Action->State
 
 a voir la fonction outlet sur les react route
+
+responsible : changer la police d'écriture de :root
+ensuite utliser em et rem

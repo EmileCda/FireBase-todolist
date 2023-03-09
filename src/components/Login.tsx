@@ -7,9 +7,8 @@ import {
   CheckUser,
   SubscribeStore,
 } from "../store/Subscription.store";
-import { ConnectionContainer, Icon, MyDiv } from "../style/Login.style";
+import { ConnectionContainer, Icon, InputGroup, MyButton } from "../style/Common.style";
 
-import { Button } from "../style/Subscription.style";
 /**
  * this component display screen subscrib (screen 1)
  * allow to get username (as an email) and password.
@@ -17,18 +16,19 @@ import { Button } from "../style/Subscription.style";
  */
 
 export default function Login() {
-  const { uid, IsValideEmail, isvalidePass } = useStore(SubscribeStore);
+  const { uid, IsValideEmail, isvalidePass,isSending } = useStore(SubscribeStore);
   if (uid) {
     return <Navigate to="/"></Navigate>;
   }
   return (
-    <ConnectionContainer emailValide={IsValideEmail} passValide={isvalidePass}>
+    <ConnectionContainer emailValide={IsValideEmail} passValide={isvalidePass} isLoading={isSending}>
       <h1>Connexion</h1>
-      <MyDiv>
+      <InputGroup>
         <input
           type="email"
           onChange={(e) => checkEmail(e.currentTarget.value)}
           name="email"
+          placeholder="E-mail"
         />
         <Icon isValide={IsValideEmail}>
           {IsValideEmail ? (
@@ -37,12 +37,13 @@ export default function Login() {
             <i className="fa-solid fa-xmark"></i>
           )}
         </Icon>
-      </MyDiv>
-      <MyDiv>
+      </InputGroup>
+      <InputGroup>
         <input
           type="text"
           onChange={(e) => checkPass(e.currentTarget.value)}
           name="password"
+          placeholder="Password"
         />
         <Icon isValide={isvalidePass}>
           {isvalidePass ? (
@@ -51,8 +52,8 @@ export default function Login() {
             <i className="fa-solid fa-xmark"></i>
           )}
         </Icon>
-      </MyDiv>
-      <Button onClick={CheckUser}>Se connecter</Button>
+      </InputGroup>
+      <MyButton onClick={CheckUser} isLoading={isSending}>Se connecter</MyButton>
       <p>
         Vous n’avez pas de compte ?<br />
       </p>

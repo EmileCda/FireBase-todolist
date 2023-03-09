@@ -7,9 +7,7 @@ import {
   CreateUser,
   SubscribeStore,
 } from "../store/Subscription.store";
-import { MyLink } from "../style/Common.style";
-import { ConnectionContainer, Icon, MyDiv } from "../style/Login.style";
-import { Button } from "../style/Subscription.style";
+import { ConnectionContainer, Icon, InputGroup, MyButton, MyLink } from "../style/Common.style";
 /**
  * this component display screen subscrib (screen 1)
  * allow to get username (as an email) and password.
@@ -23,6 +21,7 @@ export default function Subscription() {
     password,
     IsValideEmail,
     isvalidePass,
+    isSending
   } = useStore(SubscribeStore);
 
   if (uid) {
@@ -30,24 +29,24 @@ export default function Subscription() {
   }
 
   return (
-    <ConnectionContainer emailValide={IsValideEmail} passValide={isvalidePass}>
+    <ConnectionContainer emailValide={IsValideEmail} passValide={isvalidePass} isLoading>
       <h1>Inscription</h1>
-      <MyDiv>
+      <InputGroup>
         <input
           type="email"
           onChange={(e) => checkEmail(e.currentTarget.value)}
           name="email"
           value={email}
         />
-        <Icon isValide={IsValideEmail}>
+        <Icon isValide={isvalidePass}>
           {IsValideEmail ? (
             <i className="fa-solid fa-circle-check"></i>
           ) : (
             <i className="fa-solid fa-xmark"></i>
           )}
         </Icon>
-      </MyDiv>{" "}
-      <MyDiv>
+        </InputGroup>
+      <InputGroup>
         <input
           type="text"
           onChange={(e) => checkPass(e.currentTarget.value)}
@@ -61,8 +60,8 @@ export default function Subscription() {
             <i className="fa-solid fa-xmark"></i>
           )}
         </Icon>
-      </MyDiv>
-      <Button onClick={CreateUser}>S'inscrire</Button>
+      </InputGroup>
+      <MyButton onClick={CreateUser} isLoading={isSending} >S'inscrire</MyButton>
       <p> Vous avez un compte? <br /></p>
         <p><MyLink to="/Login">Connectez vous</MyLink>
       </p>
