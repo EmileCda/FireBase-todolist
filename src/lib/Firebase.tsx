@@ -25,6 +25,8 @@ export const firebaseAuth = getAuth(firebase)
 // Initialise le service firestore (la base de données)
 export const firebaseDb = getFirestore(firebase)
 
+
+
 // Nous pouvons aussi en faire un export par défaut
 export default { auth: firebaseAuth, db: firebaseDb }
 

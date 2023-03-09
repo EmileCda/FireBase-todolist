@@ -1,12 +1,13 @@
+import { doc, getDoc } from "@firebase/firestore";
 import { useStore } from "@nanostores/react";
-import { useEffect } from "react";
 import { Navigate } from "react-router";
-import { Link } from "react-router-dom";
-import { RenderErrorBoundary } from "react-router/dist/lib/hooks";
-import { toggleUser } from "../store/Menu.store";
+import { firebaseDb } from "../lib/Firebase";
 import { SubscribeStore } from "../store/Subscription.store";
 import {
   selectTodoList,
+  setListTodoList,
+  setUid,
+  todoListCollection,
   todolistStore,
   Ttodolist,
 } from "../store/TodoList.store";
@@ -16,6 +17,7 @@ import {
   IconUser,
   LowerList,
   MyLink,
+  MyP,
   NewListBox,
   TextAdd,
   TextUser,
@@ -28,12 +30,16 @@ export function testTiti(id: number) {
   console.log(id);
 }
 
-export function DisplayTodoList(
+export type DisplayTodoListProp={
   listName: string,
   responsible: string,
   id: number
-) {
-  const { listTodoList } = useStore(todolistStore);
+
+
+}
+
+export function DisplayTodoList({listName,responsible,id}:DisplayTodoListProp)
+ {
   return (
     <>
       <TodoList onClick={() => testTiti(id)}>
@@ -44,7 +50,7 @@ export function DisplayTodoList(
             <i className="fa-solid fa-user"></i>
           </IconUser>
           <TextUser>
-            <p>Par</p>
+            <MyP>Par</MyP>
             <p>{responsible}</p>
           </TextUser>
         </UpperList>
@@ -70,9 +76,16 @@ export function NewTodoList() {
 }
 
 /** this function is going to load data from firebase to local store */
-export function InitData() {
-  //  for testing
-  selectTodoList(0);
+export async function InitData() {
+  const { uid } = useStore(SubscribeStore);
+
+  const myDoc = doc(firebaseDb,todoListCollection, uid);
+  const myDocSnapshot = await getDoc(myDoc)
+
+  if (myDocSnapshot.exists()) {
+    const myData = myDocSnapshot.data();
+    setListTodoList(myDocSnapshot.data().newListTodoList,uid)
+  } 
 }
 
 /** this function is going to load data from firebase to local store */
@@ -81,12 +94,10 @@ export function ChangeToDoList(
   index: number
 ) {
   selectTodoList(index);
-  // event.stopPropagation();
-  // return <Navigate to="/"></Navigate>;
 }
 
 /**
- * this function do ...
+ * this function display all todolist and at the end a pushbutton indor to create new yodolist
  */
 export default function Home() {
   const { uid } = useStore(SubscribeStore);
@@ -100,6 +111,7 @@ export default function Home() {
   if (!uid) {
     return <Navigate to="/Login" />;
   }
+  setUid(uid);
   return (
     <>
       <HomeContainer>
@@ -107,18 +119,18 @@ export default function Home() {
         <ul>
           {listTodoList.map((TodoList: Ttodolist, index: number) => (
             <li key={index} onClick={(event) => ChangeToDoList(event, index)}>
-              <Link to="/TodoList">
-                {DisplayTodoList(
-                  TodoList.todolistName,
-                  TodoList.reponsible,
-                  index
-                )}
-              </Link>
+              <MyLink to="/TodoList">
+                <DisplayTodoList 
+                  listName={TodoList.todolistName}
+                  responsible={TodoList.reponsible}
+                  id={index}
+                />
+              </MyLink>
             </li>
           ))}
         </ul>
 
-        {NewTodoList()}
+        <NewTodoList />
       </HomeContainer>
     </>
   );

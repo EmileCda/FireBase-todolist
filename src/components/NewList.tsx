@@ -2,7 +2,7 @@ import { useStore } from "@nanostores/react";
 import { Navigate } from "react-router";
 import { Link } from "react-router-dom";
 import { SubscribeStore } from "../store/Subscription.store";
-import { addListTodolist, checkTodoListName,  todolistStore,  } from "../store/TodoList.store";
+import { addListTodolist, checkTodoListName,  setUid,  todolistStore,  } from "../store/TodoList.store";
 
 import {
   IconContainer,
@@ -28,9 +28,8 @@ export default function NewList() {
   if (!uid) {
     return <Navigate to="/Login"></Navigate>;
   }
-  // if (routeChange) {
-  //   return <Navigate to="/TodoList"></Navigate>;
-  // }
+  setUid(uid);
+
   return (
     <>
       <TitleContainer>

@@ -1,6 +1,6 @@
 import { useStore } from "@nanostores/react";
 import { Link, Navigate } from "react-router-dom";
-import { SubscribeStore } from "../store/Subscription.store";
+import { resetUid, SubscribeStore } from "../store/Subscription.store";
 import { AboutContainer } from "../style/About.style";
 import { IconContainer, TexteContainer, Title, TitleContainer } from "../style/NewList.style";
 
@@ -8,11 +8,11 @@ import { IconContainer, TexteContainer, Title, TitleContainer } from "../style/N
 /**
  * this function do ...
  */
-export default function Profile() {
-
+export default function Logout() {
+  resetUid()
   return (
     <>
-   <h1>Profile</h1>
+     <Navigate to="/Login" />;
     </>
   );
 }

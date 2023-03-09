@@ -1,9 +1,23 @@
 // import { useStore } from "@nanostores/react";
 import { addDoc, collection } from "@firebase/firestore";
+import { doc, setDoc } from "firebase/firestore"; 
+
+
 import { useStore } from "@nanostores/react";
 import { redirect } from "react-router";
 import { firebaseDb } from "../lib/Firebase";
 import { SubscribeStore } from "../store/Subscription.store";
+
+
+export async function testDB(){
+  await setDoc(doc(firebaseDb, "cities", "LA"), {
+    name: "Los Angeles",
+    state: "CA",
+    country: "USA"
+  });
+
+}
+
 /**
  * this componnent is for test , should be terminate on release 
  */
@@ -16,6 +30,8 @@ export default  function OutputTest() {
   //      })
   // console.log (status);
   
+  // Add a new document in collection "cities"
+testDB()
 
   return (
     <>

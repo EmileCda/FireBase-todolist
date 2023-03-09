@@ -1,12 +1,13 @@
-import { createUserWithEmailAndPassword } from "@firebase/auth";
 import { useStore } from "@nanostores/react";
 import { Navigate } from "react-router";
+import { Link } from "react-router-dom";
 import {
   checkEmail,
   checkPass,
   CreateUser,
   SubscribeStore,
 } from "../store/Subscription.store";
+import { ConnectionContainer, Icon, MyDiv } from "../style/Login.style";
 import { Button } from "../style/Subscription.style";
 /**
  * this component display screen subscrib (screen 1)
@@ -15,33 +16,59 @@ import { Button } from "../style/Subscription.style";
  */
 
 export default function Subscription() {
-  const { userLogged, uid, isSending } = useStore(SubscribeStore);
-  
+  const {
+    userLogged,
+    uid,
+    email,
+    password,
+    IsValideEmail,
+    isvalidePass,
+  } = useStore(SubscribeStore);
 
   if (uid) {
     return <Navigate to="/"></Navigate>;
-
   }
 
   return (
-    <>
+    <ConnectionContainer emailValide={IsValideEmail} passValide={isvalidePass}>
       <h1>Inscription</h1>
-      <input
-        type="email"
-        onChange={(e) => checkEmail(e.currentTarget.value)}
-        name="email"
-      />
-      <input
-        type="text"
-        onChange={(e) => checkPass(e.currentTarget.value)}
-        name="password"
-      />
+      <MyDiv>
+        <input
+          type="email"
+          onChange={(e) => checkEmail(e.currentTarget.value)}
+          name="email"
+          value={email}
+        />
+        <Icon isValide={IsValideEmail}>
+          {IsValideEmail ? (
+            <i className="fa-solid fa-circle-check"></i>
+          ) : (
+            <i className="fa-solid fa-xmark"></i>
+          )}
+        </Icon>
+      </MyDiv>{" "}
+      <MyDiv>
+        <input
+          type="text"
+          onChange={(e) => checkPass(e.currentTarget.value)}
+          name="password"
+          value={password}
+        />
+        <Icon isValide={isvalidePass}>
+          {isvalidePass ? (
+            <i className="fa-solid fa-circle-check"></i>
+          ) : (
+            <i className="fa-solid fa-xmark"></i>
+          )}
+        </Icon>
+      </MyDiv>
       <p>{userLogged}</p>
       <p>{uid}</p>
-      <Button onClick={CreateUser} >S'inscrire</Button>
-      {/* <Button onClick={CreateUser} isVisible={isSending}>S'inscrire</Button> */}
-      {/* <MenuUser onClick={toggleUser}  isVisible={userLogged ? true: false}> */}
-      <p>Vous avez un compte? Connectez vous</p>
-    </>
+      <Button onClick={CreateUser}>S'inscrire</Button>
+      <p>
+        Vous avez un compte?<br></br>
+        <Link to="/Login">Connectez vous</Link>
+      </p>
+    </ConnectionContainer>
   );
 }

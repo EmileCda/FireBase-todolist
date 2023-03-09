@@ -15,7 +15,6 @@ import {
   Title,
   TitleContainer,
   TitleMenu,
-  UserInformation,
 } from "../style/Menu.style";
 
 export type TmenuItem = {
@@ -31,6 +30,11 @@ const menuNav: TmenuItem[] = [
     icon: "fa-solid fa-circle-plus",
     url: "/NewList",
   },
+  {
+    name: "Se déconnecter",
+    icon: "fa-solid fa-right-from-bracket",
+    url: "/Logout",
+  },
 ];
 
 /**
@@ -40,13 +44,13 @@ const menuNav: TmenuItem[] = [
  */
 
 export function DisplayProfile() {
-  const {  isClickedUser } = useStore(MenuStore);
-  const { userLogged, uid,email ,name} = useStore(SubscribeStore);
-  console.log(userLogged)
+  const { isClickedUser } = useStore(MenuStore);
+  const { userLogged, uid, email, name } = useStore(SubscribeStore);
+  console.log(userLogged);
   return (
     <>
-    <ProfileContainer isClicked={isClickedUser}>
-    <TitleContainer>
+      <ProfileContainer isClicked={isClickedUser}>
+        <TitleContainer>
           <IconContainer>
             <Link to="#" onClick={toggleUser}>
               <i className="fa-solid fa-circle-xmark"></i>
@@ -57,18 +61,18 @@ export function DisplayProfile() {
           </Title>
         </TitleContainer>
         <ProfileItem>
-<p>Votre email : </p>
-<p>{email}</p>
+          <p>Votre email : </p>
+          <p>{email}</p>
         </ProfileItem>
         <ProfileItem>
-<p>Votre Nom : </p>
-<p>{name}</p>
+          <p>Votre Nom : </p>
+          <p>{name}</p>
         </ProfileItem>
         <ProfileItem>
-<p>Changer le mot de passe: </p>
-<p>{name}</p>
+          <p>Changer votre mot de passe : </p>
+          <p>{name}</p>
         </ProfileItem>
-    </ProfileContainer>
+      </ProfileContainer>
     </>
   );
 }
@@ -81,14 +85,13 @@ export function DisplayProfile() {
  * @returns a component item for menuNax
  */
 
-export type AddNewMenuItemProp={
-  icon : string, 
-  title: string, 
-  url : string,
-}
+export type AddNewMenuItemProp = {
+  icon: string;
+  title: string;
+  url: string;
+};
 
-
-export function AddNewMenuItem({icon,title,url}: AddNewMenuItemProp) {
+export function AddNewMenuItem({ icon, title, url }: AddNewMenuItemProp) {
   return (
     <>
       <MenuItem>
@@ -109,8 +112,8 @@ export function AddNewMenuItem({icon,title,url}: AddNewMenuItemProp) {
  * this function display mene bar
  */
 export default function Menu() {
-  const { isClickedMenu, isClickedUser } = useStore(MenuStore);
-  const { userLogged, uid } = useStore(SubscribeStore);
+  const { isClickedMenu } = useStore(MenuStore);
+  const {  uid } = useStore(SubscribeStore);
   return (
     <>
       <BottomBar>
@@ -121,7 +124,7 @@ export default function Menu() {
           <i className="fa-solid fa-user"></i>
         </MenuUser>
       </BottomBar>
-    <DisplayProfile />
+      <DisplayProfile />
       <MenuContainer isClicked={isClickedMenu}>
         <TitleContainer>
           <IconContainer>
@@ -136,7 +139,11 @@ export default function Menu() {
         <ul>
           {menuNav.map((item: TmenuItem, index: number) => (
             <li key={index}>
-              <AddNewMenuItem icon={item.icon} title={item.name} url={item.url} /> 
+              <AddNewMenuItem
+                icon={item.icon}
+                title={item.name}
+                url={item.url}
+              />
             </li>
           ))}
         </ul>

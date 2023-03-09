@@ -7,8 +7,12 @@ export const TodoList = styled.div`
   min-width: 100vw;
   display: flex;
   flex-direction: column;
-  margin: ${AppTheme.BorderRadius};
+  /* margin: ${AppTheme.BorderRadius}; */
   cursor: pointer;
+  ul.li.a {
+    text-decoration: none;
+  }
+  text-decoration: none;
 `;
 export const UpperList = styled.div`
   /* background-color: ${AppTheme.colors.lessDark}; */
@@ -28,6 +32,8 @@ export const IconUser = styled.div`
   padding: ${AppTheme.BorderRadius};
   border-radius: 0px 0px 0px ${AppTheme.BorderRadius};
   font-size: 2rem;
+  color: ${AppTheme.colors.dark};
+
   cursor: pointer;
 `;
 export const TextUser = styled.div`
@@ -38,8 +44,21 @@ export const TextUser = styled.div`
   border-radius: 0px 0px ${AppTheme.BorderRadius} 0px;
   font-family: ${AppTheme.font.regular};
   font-size: 0.7rem;
+  text-decoration: double;
+
   padding: ${AppTheme.BorderRadius};
+  p {
+    text-decoration: none;
+  }
+  a {
+    text-decoration: none;
+  }
 `;
+
+export const MyP = styled.p`
+  color: ${AppTheme.colors.notValid};
+`;
+
 export const LowerList = styled.div`
   display: flex;
   flex-grow: 1;
@@ -50,6 +69,7 @@ export const LowerList = styled.div`
   font-size: 1rem;
   font-weight: bold;
   color: ${AppTheme.colors.lessLight};
+  margin: ${AppTheme.BorderRadius} 0;
 `;
 
 export const HomeContainer = styled.div`
@@ -59,10 +79,17 @@ export const HomeContainer = styled.div`
   justify-content: flex-start;
   align-items: center;
   min-width: 100vw;
-  position: absolute;
+  /* min-height: 100vh; */
+  padding: 0 0 3rem 0;
+  /* position: absolute;
   top: 0px;
   left: 0px;
-  right: 0px;
+  right: 0px; */
+  overflow: scroll;
+  ul {
+    padding: 0;
+    margin: 0;
+  }
 `;
 
 export const Title = styled.div`
@@ -88,8 +115,9 @@ export const NewListBox = styled.div`
   justify-content: space-around;
   align-items: center;
   padding: ${AppTheme.BorderRadius};
+  margin: ${AppTheme.BorderRadius};
   cursor: pointer;
-  a{
+  a {
     text-decoration: none;
   }
 `;
@@ -97,17 +125,18 @@ export const NewListBox = styled.div`
 export const IconAdd = styled.div`
   padding: ${AppTheme.BorderRadius};
   font-size: 1.5rem;
+  color: ${AppTheme.colors.light};
 `;
 export const TextAdd = styled.div`
-    font-size: 1rem;
-    font-family: ${AppTheme.font.regular};
-    color: ${AppTheme.colors.lessLight};
-a{
+  font-size: 1rem;
+  font-family: ${AppTheme.font.regular};
+  color: ${AppTheme.colors.light};
+  a {
     text-decoration: none;
-}    
+  }
 `;
 
 export const MyLink = styled(Link)`
   text-decoration: none;
-
-`
+  color: ${AppTheme.colors.dark};
+`;

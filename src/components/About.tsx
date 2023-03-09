@@ -1,12 +1,5 @@
-import { useStore } from "@nanostores/react";
-import { Link, Navigate } from "react-router-dom";
-import { SubscribeStore } from "../store/Subscription.store";
-import { AboutContainer } from "../style/About.style";
-import { IconContainer, TexteContainer, Title, TitleContainer } from "../style/NewList.style";
-
-
 /**
- * this function do ...
+ * this function About
  */
 export default function About() {
 
