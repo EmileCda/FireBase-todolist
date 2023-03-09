@@ -11,12 +11,12 @@ import {
   todolistStore,
   Ttodolist,
 } from "../store/TodoList.store";
+import { MyLink } from "../style/Common.style";
 import {
   HomeContainer,
   IconAdd,
   IconUser,
   LowerList,
-  MyLink,
   MyP,
   NewListBox,
   TextAdd,
@@ -30,16 +30,17 @@ export function testTiti(id: number) {
   console.log(id);
 }
 
-export type DisplayTodoListProp={
-  listName: string,
-  responsible: string,
-  id: number
+export type DisplayTodoListProp = {
+  listName: string;
+  responsible: string;
+  id: number;
+};
 
-
-}
-
-export function DisplayTodoList({listName,responsible,id}:DisplayTodoListProp)
- {
+export function DisplayTodoList({
+  listName,
+  responsible,
+  id,
+}: DisplayTodoListProp) {
   return (
     <>
       <TodoList onClick={() => testTiti(id)}>
@@ -79,13 +80,13 @@ export function NewTodoList() {
 export async function InitData() {
   const { uid } = useStore(SubscribeStore);
 
-  const myDoc = doc(firebaseDb,todoListCollection, uid);
-  const myDocSnapshot = await getDoc(myDoc)
+  const myDoc = doc(firebaseDb, todoListCollection, uid);
+  const myDocSnapshot = await getDoc(myDoc);
 
   if (myDocSnapshot.exists()) {
     const myData = myDocSnapshot.data();
-    setListTodoList(myDocSnapshot.data().newListTodoList,uid)
-  } 
+    // setListTodoList(myDocSnapshot.data().newListTodoList, uid);
+  }
 }
 
 /** this function is going to load data from firebase to local store */
@@ -101,11 +102,10 @@ export function ChangeToDoList(
  */
 export default function Home() {
   const { uid } = useStore(SubscribeStore);
-  const { listTodoList, idTodoList } =
-    useStore(todolistStore);
+  const { listTodoList, idTodoList } = useStore(todolistStore);
 
   if (idTodoList < 0) {
-    InitData();
+    setListTodoList()
   }
 
   if (!uid) {
@@ -120,7 +120,7 @@ export default function Home() {
           {listTodoList.map((TodoList: Ttodolist, index: number) => (
             <li key={index} onClick={(event) => ChangeToDoList(event, index)}>
               <MyLink to="/TodoList">
-                <DisplayTodoList 
+                <DisplayTodoList
                   listName={TodoList.todolistName}
                   responsible={TodoList.reponsible}
                   id={index}

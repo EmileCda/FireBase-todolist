@@ -1,6 +1,5 @@
 import { useStore } from "@nanostores/react";
-import { useEffect } from "react";
-import { Link } from "react-router-dom";
+
 import {
   addTodo,
   checkTodo,
@@ -10,6 +9,7 @@ import {
   toggleTodoState,
   Ttodo,
 } from "../store/TodoList.store";
+import { MyLink } from "../style/Common.style";
 
 import {
   Button,
@@ -31,14 +31,36 @@ import {
   TodoName,
 } from "../style/TodoList.style";
 
-export function DisplayTodo(todo: Ttodo) {}
+
+export  type TDisplayTodoProps ={
+  todo: Ttodo;
+  index: number;
+}
+
+export function DisplayTodo({todo,index} :  TDisplayTodoProps) {
+  
+  return (
+    <Tododiv isClicked={todo.isDone}>
+      <TodoName>{todo.todoName}</TodoName>
+      <Icone onClick={() => deleteTodo(index)}>
+        <i className="fa-sharp fa-solid fa-trash"></i>
+      </Icone>
+    </Tododiv>
+  );
+}
 
 /**
  * this function do ...
  */
 export default function TodoList() {
-  const { todolistName, reponsible, todolist, todoName, idTodoList,isLoading } =
-    useStore(todolistStore);
+  const {
+    todolistName,
+    reponsible,
+    todolist,
+    todoName,
+    idTodoList,
+    isLoading,
+  } = useStore(todolistStore);
 
   if (todolistName === "") {
     selectTodoList(idTodoList);
@@ -46,50 +68,45 @@ export default function TodoList() {
 
   return (
     <>
-    <TodoListContainer isLoading={isLoading}>
-      <TitleContainer>
+      <TodoListContainer isLoading={isLoading}>
+        <TitleContainer>
           <IconContainer>
-          <Link to="/">
-            <i className="fa-solid fa-chevron-left"></i>
-        </Link>
+            <MyLink to="/">
+              <i className="fa-solid fa-chevron-left"></i>
+            </MyLink>
           </IconContainer>
-        <TexteContainer>
-          <Title>{todolistName}</Title>
-        </TexteContainer>
-      </TitleContainer>
-      <UserContainer>
-        <UpperList>
-          <IconUser>
-            <i className="fa-solid fa-user"></i>
-          </IconUser>
-          <TextUser>
-            <p>Par</p>
-            <p>{reponsible}</p>
-          </TextUser>
-        </UpperList>
-      </UserContainer>
-      <Input
-        type="text"
-        onChange={(e) => checkTodo(e.currentTarget.value)}
-        name="Todo"
-        value={todoName}
-      />
+          <TexteContainer>
+            <Title>{todolistName}</Title>
+          </TexteContainer>
+        </TitleContainer>
+        <UserContainer>
+          <UpperList>
+            <IconUser>
+              <i className="fa-solid fa-user"></i>
+            </IconUser>
+            <TextUser>
+              <p>Par</p>
+              <p>{reponsible}</p>
+            </TextUser>
+          </UpperList>
+        </UserContainer>
+        <Input
+          type="text"
+          onChange={(e) => checkTodo(e.currentTarget.value)}
+          name="Todo"
+          value={todoName}
+        />
 
-      <Button onClick={addTodo}>Ajouter</Button>
-      <DisplayListTodo>
-        <ul>
-          {todolist.map((item: Ttodo, index) => (
-            <li key={index} onClick={() => toggleTodoState(index)}>
-              <Tododiv isClicked={item.isDone}>
-                <TodoName>{item.todoName}</TodoName>
-                <Icone onClick={() => deleteTodo(index)}>
-                  <i className="fa-sharp fa-solid fa-trash"></i>
-                </Icone>
-              </Tododiv>
-            </li>
-          ))}
-        </ul>
-      </DisplayListTodo>
+        <Button onClick={addTodo}>Ajouter</Button>
+        <DisplayListTodo>
+          <ul>
+            {todolist.map((item: Ttodo, index:number) => (
+              <li key={index} onClick={() => toggleTodoState(index)}>
+                <DisplayTodo todo={item} index={index} />
+              </li>
+            ))}
+          </ul>
+        </DisplayListTodo>
       </TodoListContainer>
     </>
   );

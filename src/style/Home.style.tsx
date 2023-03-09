@@ -136,7 +136,3 @@ export const TextAdd = styled.div`
   }
 `;
 
-export const MyLink = styled(Link)`
-  text-decoration: none;
-  color: ${AppTheme.colors.dark};
-`;

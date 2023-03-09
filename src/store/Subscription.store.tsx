@@ -14,13 +14,12 @@ export type TUser = {};
 
 export type TSubscribeStore = {
   email: string;
-  name : string;
+  name: string;
   password: string;
-  IsValideEmail: boolean ;
-  isvalidePass: boolean ;
-  isSending: boolean ;
-  userLogged: string ;
-  uid: string ;
+  IsValideEmail: boolean;
+  isvalidePass: boolean;
+  isSending: boolean;
+  uid: string;
   message: string | null;
 };
 
@@ -31,7 +30,6 @@ export const SubscribeStore = map<TSubscribeStore>({
   IsValideEmail: false,
   isvalidePass: false,
   isSending: false,
-  userLogged: "",
   uid: "",
   message: "",
 });
@@ -61,16 +59,18 @@ export const validateEmail = action(
 
 // ---------------------------------------------------------------
 
-export const resetUid= action(SubscribeStore, "resetUid", (store) => {
-
+export const resetUid = action(SubscribeStore, "resetUid", (store) => {
   store.setKey("uid", "");
 });
 // ---------------------------------------------------------------
 
-export const setName= action(SubscribeStore, "setNom", (store,newName : string) => {
-
-  store.setKey("name", newName);
-});
+export const setName = action(
+  SubscribeStore,
+  "setNom",
+  (store, newName: string) => {
+    store.setKey("name", newName);
+  }
+);
 
 // ---------------------------------------------------------------
 
@@ -89,8 +89,7 @@ export const checkEmail = action(
   "checkEmail",
   (store, value: string) => {
     store.setKey("email", value);
-    validateEmail()
-
+    validateEmail();
   }
 );
 
@@ -100,22 +99,31 @@ export const checkPass = action(
   "checkPass",
   (store, value: string) => {
     store.setKey("password", value);
-    validatePass()
+    validatePass();
   }
 );
 
 // ---------------------------------------------------------------
 export const CheckUser = action(SubscribeStore, "CheckUser", async (store) => {
   const { email, password } = store.get();
-  console.log(email, password);
-  const userAutorized = await signInWithEmailAndPassword(
-    firebaseAuth,
-    email,
-    password
-  );
-console.log(userAutorized.user);
-  store.setKey("userLogged", userAutorized.user.email ? userAutorized.user.email : "no-user");
-  store.setKey("uid", userAutorized.user.uid);
+  let userAutorized;
+  try {
+ // login successful.
+
+    console.log(email, password);
+    userAutorized = await signInWithEmailAndPassword(
+      firebaseAuth,
+      email,
+      password
+    );
+    store.setKey("uid", userAutorized.user.uid);
+  } catch(error){
+    console.log(error);
+    store.setKey(
+      "message",
+      "erreur de connexion; username ou password incorrect"
+    );
+  }
 });
 
 // ---------------------------------------------------------------
@@ -123,7 +131,7 @@ export const CreateUser = action(
   SubscribeStore,
   "CreateUser",
   async (store) => {
-    console.log ("CreateUser");
+    console.log("CreateUser");
     const { isSending, email, password, isvalidePass, IsValideEmail } =
       store.get();
 
@@ -136,17 +144,17 @@ export const CreateUser = action(
           email,
           password
         );
-        console.log (valideUser);
-        store.setKey("userLogged", valideUser.user.email ? valideUser.user.email : "no-user");
+        console.log(valideUser);
 
         store.setKey("uid", valideUser.user.uid);
       } catch {
         store.setKey("message", "Erreur de connexion");
       }
-    }
-    else{
-      store.setKey("message", `error ${isSending} && ${isvalidePass} && ${IsValideEmail}`);
-
+    } else {
+      store.setKey(
+        "message",
+        `error ${isSending} && ${isvalidePass} && ${IsValideEmail}`
+      );
     }
     store.setKey("isSending", false);
   }

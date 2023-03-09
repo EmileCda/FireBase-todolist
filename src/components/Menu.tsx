@@ -1,10 +1,9 @@
 import { useStore } from "@nanostores/react";
-import { Link } from "react-router-dom";
 import { MenuStore, toggleMenu, toggleUser } from "../store/Menu.store";
 import { SubscribeStore } from "../store/Subscription.store";
+import { IconContainer, MyLink, Title, TitleContainer } from "../style/Common.style";
 import {
   BottomBar,
-  IconContainer,
   MenuBurger,
   MenuContainer,
   MenuItem,
@@ -12,10 +11,9 @@ import {
   MenuUser,
   ProfileContainer,
   ProfileItem,
-  Title,
-  TitleContainer,
   TitleMenu,
 } from "../style/Menu.style";
+import { TopBar } from "./Common";
 
 export type TmenuItem = {
   name: string;
@@ -45,21 +43,21 @@ const menuNav: TmenuItem[] = [
 
 export function DisplayProfile() {
   const { isClickedUser } = useStore(MenuStore);
-  const { userLogged, uid, email, name } = useStore(SubscribeStore);
-  console.log(userLogged);
+  const { email, name } = useStore(SubscribeStore);
   return (
     <>
       <ProfileContainer isClicked={isClickedUser}>
-        <TitleContainer>
+      <TopBar title="Mon Profil" icon="fa-solid fa-circle-xmark" url="#" />
+        {/* <TitleContainer>
           <IconContainer>
-            <Link to="#" onClick={toggleUser}>
+            <MyLink to="#" onClick={toggleUser}>
               <i className="fa-solid fa-circle-xmark"></i>
-            </Link>
+            </MyLink>
           </IconContainer>
           <Title>
             <p>Mon Profil</p>
           </Title>
-        </TitleContainer>
+        </TitleContainer> */}
         <ProfileItem>
           <p>Votre email : </p>
           <p>{email}</p>
@@ -95,25 +93,24 @@ export function AddNewMenuItem({ icon, title, url }: AddNewMenuItemProp) {
   return (
     <>
       <MenuItem>
-        <Link to={url} onClick={toggleMenu}>
+        <MyLink to={url} onClick={toggleMenu}>
           <MenuItemDesc>
             <IconContainer>
               <i className={icon}></i>
             </IconContainer>
             <TitleMenu>{title}</TitleMenu>
           </MenuItemDesc>
-        </Link>
+        </MyLink>
       </MenuItem>
     </>
   );
 }
-
-/**
- * this function display mene bar
+/** this component display the bottom bat
+ * 
  */
-export default function Menu() {
-  const { isClickedMenu } = useStore(MenuStore);
-  const {  uid } = useStore(SubscribeStore);
+export function MyBottomBar() {
+  const { uid } = useStore(SubscribeStore);
+
   return (
     <>
       <BottomBar>
@@ -124,13 +121,24 @@ export default function Menu() {
           <i className="fa-solid fa-user"></i>
         </MenuUser>
       </BottomBar>
+    </>
+  );
+}
+/**
+ * this function display mene bar
+ */
+export default function Menu() {
+  const { isClickedMenu } = useStore(MenuStore);
+  return (
+    <>
+      <MyBottomBar />
       <DisplayProfile />
       <MenuContainer isClicked={isClickedMenu}>
         <TitleContainer>
           <IconContainer>
-            <Link to="#" onClick={toggleMenu}>
+            <MyLink to="#" onClick={toggleMenu}>
               <i className="fa-solid fa-circle-xmark"></i>
-            </Link>
+            </MyLink>
           </IconContainer>
           <Title>
             <p>Menu</p>

@@ -1,8 +1,9 @@
 import { useStore } from "@nanostores/react";
 import { Navigate } from "react-router";
-import { Link } from "react-router-dom";
+
 import { SubscribeStore } from "../store/Subscription.store";
 import { addListTodolist, checkTodoListName,  setUid,  todolistStore,  } from "../store/TodoList.store";
+import { MyLink } from "../style/Common.style";
 
 import {
   IconContainer,
@@ -34,9 +35,9 @@ export default function NewList() {
     <>
       <TitleContainer>
           <IconContainer>
-          <Link to="/">
+          <MyLink to="/">
             <i className="fa-solid fa-chevron-left"></i>
-            </Link>
+            </MyLink>
           </IconContainer>
         <TexteContainer>
           <Title>Nouvelle liste</Title>
@@ -59,7 +60,7 @@ export default function NewList() {
         name="todolistName"
         placeholder="Course du dimanche"
       />
-      <Link to="/TodoList" onClick={addListTodolist}> <Button>Créer</Button></Link>
+      <MyLink to="/TodoList" onClick={addListTodolist}> <Button>Créer</Button></MyLink>
     </>
   );
 }

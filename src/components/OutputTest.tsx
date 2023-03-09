@@ -6,7 +6,6 @@ import { doc, setDoc } from "firebase/firestore";
 import { useStore } from "@nanostores/react";
 import { redirect } from "react-router";
 import { firebaseDb } from "../lib/Firebase";
-import { SubscribeStore } from "../store/Subscription.store";
 
 
 export async function testDB(){
@@ -22,15 +21,7 @@ export async function testDB(){
  * this componnent is for test , should be terminate on release 
  */
 export default  function OutputTest() {
-  // const { email, password,uid } = useStore(SubscribeStore);
 
-  //  const status=      addDoc(collection(firebaseDb, 'tasks'), {
-  //        todolistname: "toto",
-  //        takslist:["task1","task2","task3","task4","task5","task6",]
-  //      })
-  // console.log (status);
-  
-  // Add a new document in collection "cities"
 testDB()
 
   return (

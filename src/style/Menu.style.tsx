@@ -158,30 +158,7 @@ export const MenuItemDesc = styled.div`
 
 export const TitleMenu = styled.div``;
 
-export const TitleContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-export const IconContainer = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  padding: 0 ${AppTheme.BorderRadius};
-  i{
-    color: ${AppTheme.colors.light};
-    font-size: 2rem;
 
-  }
-`;
-
-export const Title = styled.div`
-  font-size: 2.3rem;
-  padding: 0 ${AppTheme.BorderRadius};
-  font-family: ${AppTheme.font.extra};
-  p {
-    margin: 0;
-  }
-`;
 
 
 /**

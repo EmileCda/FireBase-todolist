@@ -1,12 +1,13 @@
 import { useStore } from "@nanostores/react";
 import { Navigate } from "react-router";
-import { Link } from "react-router-dom";
+
 import {
   checkEmail,
   checkPass,
   CreateUser,
   SubscribeStore,
 } from "../store/Subscription.store";
+import { MyLink } from "../style/Common.style";
 import { ConnectionContainer, Icon, MyDiv } from "../style/Login.style";
 import { Button } from "../style/Subscription.style";
 /**
@@ -17,7 +18,6 @@ import { Button } from "../style/Subscription.style";
 
 export default function Subscription() {
   const {
-    userLogged,
     uid,
     email,
     password,
@@ -62,12 +62,9 @@ export default function Subscription() {
           )}
         </Icon>
       </MyDiv>
-      <p>{userLogged}</p>
-      <p>{uid}</p>
       <Button onClick={CreateUser}>S'inscrire</Button>
-      <p>
-        Vous avez un compte?<br></br>
-        <Link to="/Login">Connectez vous</Link>
+      <p> Vous avez un compte? <br /></p>
+        <p><MyLink to="/Login">Connectez vous</MyLink>
       </p>
     </ConnectionContainer>
   );

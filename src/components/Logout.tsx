@@ -1,18 +1,28 @@
-import { useStore } from "@nanostores/react";
-import { Link, Navigate } from "react-router-dom";
-import { resetUid, SubscribeStore } from "../store/Subscription.store";
-import { AboutContainer } from "../style/About.style";
-import { IconContainer, TexteContainer, Title, TitleContainer } from "../style/NewList.style";
-
+import { signOut } from "@firebase/auth";
+import {  Navigate } from "react-router-dom";
+import { firebaseAuth } from "../lib/Firebase";
+import { resetUid, } from "../store/Subscription.store";
 
 /**
- * this function do ...
+ * this function sign-out the current user
  */
-export default function Logout() {
-  resetUid()
+export async function firebaseLogout(){
+  try {
+    await signOut(firebaseAuth);
+    // logout successful.
+  } catch (error) {}
+
+}
+
+
+
+export default  function Logout() {
+  resetUid();
+  firebaseLogout();
+
   return (
     <>
-     <Navigate to="/Login" />;
+      <Navigate to="/Login" />;
     </>
   );
 }
