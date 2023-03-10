@@ -78,7 +78,7 @@ npm install dotenv --save
 
 # première correction
 
-[Line vers la correction](https://github.com/Djeg/formation-react/tree/session-projet/06-03-23/10-03-23)
+[Lien vers la correction](https://github.com/Djeg/formation-react/tree/session-projet/06-03-23/10-03-23)
 très impormat : le schéma réaction
 
 Composant-> Action->State
@@ -87,3 +87,74 @@ a voir la fonction outlet sur les react route
 
 responsible : changer la police d'écriture de :root
 ensuite utliser em et rem
+
+[note : a voir la documentation sur svelte ](https://svelte.dev/)
+
+doc svelte https://svelte.dev/docs
+
+# mise en ligne
+
+service sur fire base :
+![](./doc/image/service-hosting.png)
+
+![](./doc/image/hosting.png)
+
+install firebase tools
+![](./doc/image/config-firebase-hosting.png)
+
+```js
+npm install -g firebase-tools
+
+```
+
+fire base loging
+
+```sh
+firebase init
+```
+
+autentification
+![](./doc/image/service-active.png)
+
+![](./doc/image/config-firebase.png)
+
+![](./doc/image/config-firebase-hosting.png)
+
+![](./doc/image/config-firebase-hosting-1.png)
+
+![](./doc/image/config-firebase-deploy.png.png)
+
+```js
+npm run build
+```
+
+modifier firebase.json pour le répertoire dist
+
+```js
+firebase deploy
+```
+
+hosting commencez
+install un otuils
+firebase init
+
+dossier à mettre en ligne : dossier dist
+
+npm run build pour créer le dossier dist
+
+firebase->login défnit le droit de mise en ligne
+
+## correction développé en react native
+
+Application entierrement corrigé : https://github.com/Djeg/formation-react/tree/projet-native/19-12-22/23-12-22
+
+# mettre une application mobile sur store
+
+voir doc : doc.expo.  
+et react native dev
+
+base de donnée sur le browser
+
+[indexbb : doc](https://developer.mozilla.org/fr/docs/Web/API/IndexedDB_API)
+
+[localstorage : doc localstorage nDM](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage)

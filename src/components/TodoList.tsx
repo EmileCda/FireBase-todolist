@@ -1,16 +1,7 @@
 import { useStore } from "@nanostores/react";
 import { Navigate } from "react-router";
 
-import {
-  addTodo,
-  checkTodo,
-  deleteCurrentTodoList,
-  deleteTodo,
-  selectTodoList,
-  todolistStore,
-  toggleTodoState,
-  Ttodo,
-} from "../store/TodoList.store";
+import { addTodo, deleteTodo, deleteTodoList, inputChangeTodoName, todolistStore, toggleTodoIsDone, Ttodo } from "../store/TodoList.store";
 import { MyButton, MyLink } from "../style/Common.style";
 
 import {
@@ -55,26 +46,14 @@ export function DisplayTodo({ todo, index }: TDisplayTodoProps) {
  * this function do ...
  */
 export default function TodoList() {
-  const {
-    todolistName,
-    responsible,
-    todolist,
-    todoName,
-    idTodoList,
-    isLoading,
+  const { listTodoList,idCurrentTodoList,user,inputNewTodoName,isBusy
   } = useStore(todolistStore);
 
-  if (todolistName === "") {
-    selectTodoList(idTodoList);
-  }
 
-  if (idTodoList < 0) {
-    return <Navigate to="/" />;
-  }
 
   return (
     <>
-      <TodoListContainer isLoading={isLoading}>
+      <TodoListContainer isLoading={isBusy}>
         <TitleContainer>
           <IconContainer>
             <MyLink to="/">
@@ -82,7 +61,7 @@ export default function TodoList() {
             </MyLink>
           </IconContainer>
           <TexteContainer>
-            <Title>{todolistName}</Title>
+            <Title>{listTodoList[idCurrentTodoList].todolistName}</Title>
           </TexteContainer>
         </TitleContainer>
         <UserContainer>
@@ -92,25 +71,25 @@ export default function TodoList() {
             </IconUser>
             <TextUser>
               <p>Par</p>
-              <p>{responsible}</p>
+              <p>{user.name}</p>
             </TextUser>
           </UpperList>
         </UserContainer>
         <InputGroup>
           <Input
             type="text"
-            onChange={(e) => checkTodo(e.currentTarget.value)}
+            onChange={(e) => inputChangeTodoName(e.currentTarget.value)}
             name="Todo"
-            value={todoName}
+            value={inputNewTodoName}
           />
-          <IconButton onClick={addTodo} isLoading={isLoading}>
+          <IconButton onClick={addTodo} isLoading={isBusy}>
             <i className="fa-solid fa-circle-plus"></i>
           </IconButton>
         </InputGroup>
         <DisplayListTodo>
           <ul>
-            {todolist.map((item: Ttodo, index: number) => (
-              <li key={index} onClick={() => toggleTodoState(index)}>
+            {listTodoList[idCurrentTodoList].todolist.map((item: Ttodo, index: number) => (
+              <li key={index} onClick={() => toggleTodoIsDone(index)}>
                 <DisplayTodo todo={item} index={index} />
               </li>
             ))}
@@ -118,8 +97,8 @@ export default function TodoList() {
         </DisplayListTodo>
       </TodoListContainer>
       <MyLink to="/">
-        <DeleteList isLoading={isLoading}>
-          <Icone onClick={deleteCurrentTodoList}>
+        <DeleteList isLoading={isBusy}>
+          <Icone onClick={deleteTodoList}>
             <i className="fa-sharp fa-solid fa-trash"></i>
           </Icone>
         </DeleteList>

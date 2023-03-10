@@ -1,7 +1,7 @@
 import { useStore } from "@nanostores/react";
 import { MenuStore, toggleMenu, toggleUser } from "../store/Menu.store";
-import { SubscribeStore } from "../store/Subscription.store";
-import { IconContainer, MyLink, Title, TitleContainer } from "../style/Common.style";
+import { todolistStore } from "../store/TodoList.store";
+import { IconContainer, MyLink,  } from "../style/Common.style";
 import {
   BottomBar,
   MenuBurger,
@@ -13,7 +13,7 @@ import {
   ProfileItem,
   TitleMenu,
 } from "../style/Menu.style";
-import { TopBar } from "./Common";
+import { TopBarMenu, TopBarProfile } from "./Common";
 
 export type TmenuItem = {
   name: string;
@@ -43,11 +43,11 @@ const menuNav: TmenuItem[] = [
 
 export function DisplayProfile() {
   const { isClickedUser } = useStore(MenuStore);
-  const { email, name } = useStore(SubscribeStore);
+  const {user}=useStore(todolistStore)
   return (
     <>
       <ProfileContainer isClicked={isClickedUser}>
-      <TopBar title="Mon Profil" icon="fa-solid fa-circle-xmark" url="#" />
+      <TopBarProfile title="Mon Profil" icon="fa-solid fa-circle-xmark" url="#" />
         {/* <TitleContainer>
           <IconContainer>
             <MyLink to="#" onClick={toggleUser}>
@@ -60,11 +60,11 @@ export function DisplayProfile() {
         </TitleContainer> */}
         <ProfileItem>
           <p>Votre email : </p>
-          <p>{email}</p>
+          <p>{user ? user.email : ""}</p>
         </ProfileItem>
         <ProfileItem>
           <p>Votre Nom : </p>
-          <p>{name}</p>
+          <p>{user ? user.name:""}</p>
         </ProfileItem>
         <ProfileItem>
           <p>Changer votre mot de passe : </p>
@@ -108,7 +108,7 @@ export function AddNewMenuItem({ icon, title, url }: AddNewMenuItemProp) {
  * 
  */
 export function MyBottomBar() {
-  const { uid } = useStore(SubscribeStore);
+  const { user } = useStore(todolistStore);
 
   return (
     <>
@@ -116,7 +116,7 @@ export function MyBottomBar() {
         <MenuBurger onClick={toggleMenu}>
           <i className="fa-solid fa-bars"></i>
         </MenuBurger>
-        <MenuUser onClick={toggleUser} isVisible={uid ? true : false}>
+        <MenuUser onClick={toggleUser} isVisible={user ? true : false}>
           <i className="fa-solid fa-user"></i>
         </MenuUser>
       </BottomBar>
@@ -128,21 +128,19 @@ export function MyBottomBar() {
  */
 export default function Menu() {
   const { isClickedMenu } = useStore(MenuStore);
+  const { user } = useStore(todolistStore);
+ 
+  if (user.uid===""){
+    return (<></>)
+  }
+ 
   return (
     <>
       <MyBottomBar />
       <DisplayProfile />
       <MenuContainer isClicked={isClickedMenu}>
-        <TitleContainer>
-          <IconContainer>
-            <MyLink to="#" onClick={toggleMenu}>
-              <i className="fa-solid fa-circle-xmark"></i>
-            </MyLink>
-          </IconContainer>
-          <Title>
-            <p>Menu</p>
-          </Title>
-        </TitleContainer>
+      <TopBarMenu title="Menu" icon="fa-solid fa-circle-xmark" url="#" />
+        
         <ul>
           {menuNav.map((item: TmenuItem, index: number) => (
             <li key={index}>

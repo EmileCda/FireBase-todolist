@@ -1,12 +1,8 @@
 import { useStore } from "@nanostores/react";
 import { Navigate } from "react-router";
+import { CreateUser, inputChangeEmail, inputChangePassword, subscribeStore } from "../store/Subscription.store";
+import { todolistStore } from "../store/TodoList.store";
 
-import {
-  checkEmail,
-  checkPass,
-  CreateUser,
-  SubscribeStore,
-} from "../store/Subscription.store";
 import { ConnectionContainer, Icon, InputGroup, MyButton, MyLink } from "../style/Common.style";
 /**
  * this component display screen subscrib (screen 1)
@@ -15,16 +11,12 @@ import { ConnectionContainer, Icon, InputGroup, MyButton, MyLink } from "../styl
  */
 
 export default function Subscription() {
-  const {
-    uid,
-    email,
-    password,
-    IsValideEmail,
-    isvalidePass,
-    isSending
-  } = useStore(SubscribeStore);
+  const { user,
+  } = useStore(todolistStore);
 
-  if (uid) {
+  const {IsValideEmail,isvalidePass,email,password,isBusy}= useStore(subscribeStore);
+
+  if (user.uid !=="") {
     return <Navigate to="/"></Navigate>;
   }
 
@@ -34,7 +26,7 @@ export default function Subscription() {
       <InputGroup>
         <input
           type="email"
-          onChange={(e) => checkEmail(e.currentTarget.value)}
+          onChange={(e) => inputChangeEmail(e.currentTarget.value)}
           name="email"
           value={email}
         />
@@ -49,7 +41,7 @@ export default function Subscription() {
       <InputGroup>
         <input
           type="text"
-          onChange={(e) => checkPass(e.currentTarget.value)}
+          onChange={(e) => inputChangePassword(e.currentTarget.value)}
           name="password"
           value={password}
         />
@@ -61,7 +53,7 @@ export default function Subscription() {
           )}
         </Icon>
       </InputGroup>
-      <MyButton onClick={CreateUser} isLoading={isSending} >S'inscrire</MyButton>
+      <MyButton onClick={CreateUser} isLoading={isBusy} >S'inscrire</MyButton>
       <p> Vous avez un compte? <br /></p>
         <p><MyLink to="/Login">Connectez vous</MyLink>
       </p>

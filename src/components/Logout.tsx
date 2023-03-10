@@ -1,10 +1,8 @@
 import { signOut } from "@firebase/auth";
-import { Navigate } from "react-router-dom";
+import { useStore } from "@nanostores/react";
+import { Navigate } from "react-router";
 import { firebaseAuth } from "../lib/Firebase";
-import {
-  resetSubscribeStore,
-} from "../store/Subscription.store";
-import { resetTodolistStore } from "../store/TodoList.store";
+import { resetUser, todolistStore } from "../store/TodoList.store";
 
 /**
  * this function sign-out the current user
@@ -12,18 +10,16 @@ import { resetTodolistStore } from "../store/TodoList.store";
 export async function firebaseLogout() {
   try {
     await signOut(firebaseAuth);
+    resetUser();
     // logout successful.
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export default function Logout() {
-  resetSubscribeStore();
-  resetTodolistStore();
   firebaseLogout();
 
-  return (
-    <>
-      <Navigate to="/Login" />;
-    </>
-  );
+  return <Navigate to="/Login" />;
+
 }

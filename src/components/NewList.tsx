@@ -1,8 +1,7 @@
 import { useStore } from "@nanostores/react";
 import { Navigate } from "react-router";
 
-import { SubscribeStore } from "../store/Subscription.store";
-import { addListTodolist, checkTodoListName,  setUid,  todolistStore,  } from "../store/TodoList.store";
+import { addTodoList, inputChangeTodoListName, todolistStore } from "../store/TodoList.store";
 import {  MyButton, MyLink } from "../style/Common.style";
 
 import {
@@ -22,13 +21,11 @@ import {
  * this function do ...
  */
 export default function NewList() {
-  const { uid } = useStore(SubscribeStore);
-  const { responsible, isLoading } = useStore(todolistStore);
+  const { user, isBusy } = useStore(todolistStore);
 
-  if (!uid) {
+  if (!user.uid) {
     return <Navigate to="/Login"></Navigate>;
   }
-  setUid(uid);
 
   return (
     <>
@@ -49,17 +46,17 @@ export default function NewList() {
           </IconUser>
           <TextUser>
             <p>Par</p>
-            <p>{responsible}</p>
+            <p>{user.name}</p>
           </TextUser>
         </UpperList>
       </UserContainer>
       <Input
         type="text"
-        onChange={(e) => checkTodoListName(e.currentTarget.value)}
+        onChange={(e) => inputChangeTodoListName(e.currentTarget.value)}
         name="todolistName"
         placeholder="Course du dimanche"
       />
-      <MyLink to="/TodoList" onClick={addListTodolist}><MyButton isLoading={isLoading}> Créer</MyButton></MyLink>
+      <MyLink to="/TodoList" onClick={addTodoList}><MyButton isLoading={isBusy}> Créer</MyButton></MyLink>
     </>
   );
 }

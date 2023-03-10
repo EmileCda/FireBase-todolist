@@ -22,15 +22,13 @@ export default function App() {
       <BrowserRouter>
         <AppGlobalStyle />
         <Routes>
-          <Route path="/" element={<Home />}>
-            <Route path="NewList" element={<NewList />} />
-            <Route path="TodoList" element={<TodoList />} />
-          </Route>
+          <Route path="/" element={<Home />} />
+          <Route path="/NewList" element={<NewList />} />
+          <Route path="/TodoList" element={<TodoList />} />
           <Route path="/Subscription" element={<Subscription />} />
           <Route path="/OutputTest" element={<OutputTest />} />
           <Route path="/Login" element={<Login />} />
           <Route path="/Logout" element={<Logout />} />
-          
         </Routes>
         <Menu />
       </BrowserRouter>

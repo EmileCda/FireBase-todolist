@@ -9,54 +9,28 @@ import {
 } from "@firebase/auth";
 import { action, map } from "nanostores";
 import { firebaseAuth } from "../lib/Firebase";
-import { setListTodoList } from "./TodoList.store";
-
-export type TUser = {};
+import { load, setUser } from "./TodoList.store";
 
 export type TSubscribeStore = {
   email: string;
-  name: string;
   password: string;
   IsValideEmail: boolean;
   isvalidePass: boolean;
-  isSending: boolean;
-  uid: string;
-  message: string | null;
+  isBusy: boolean;
+  message: string;
 };
 
-export const SubscribeStore = map<TSubscribeStore>({
+export const subscribeStore = map<TSubscribeStore>({
   email: "",
-  name: "name init",
   password: "",
   IsValideEmail: false,
   isvalidePass: false,
-  isSending: false,
-  uid: "",
+  isBusy: false,
   message: "",
 });
 
-export const resetSubscribeStore = action(
-  SubscribeStore,
-  "resetStore",
-  (store) => {
-
-    store.setKey("email", "");
-    store.setKey("name", "name init");
-    store.setKey("password", "");
-    store.setKey("IsValideEmail", false);
-    store.setKey("isvalidePass", false);
-    store.setKey("isSending", false);
-    store.setKey("uid", "");
-    store.setKey("message", "");
-
-
-  }
-  
-)
-
-
 export const validateEmail = action(
-  SubscribeStore,
+  subscribeStore,
   "validateEmail",
   (store) => {
     // Retrieve the email in the store
@@ -72,33 +46,16 @@ export const validateEmail = action(
     if (/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/.test(email)) {
       store.setKey("IsValideEmail", true);
       store.setKey("email", email);
-      store.setKey("name", email.substring(0, email.lastIndexOf("@")));
-      
+
       return;
     }
     // default
     store.setKey("IsValideEmail", false);
   }
 );
-
 // ---------------------------------------------------------------
 
-export const resetUid = action(SubscribeStore, "resetUid", (store) => {
-  store.setKey("uid", "");
-});
-// ---------------------------------------------------------------
-
-export const setName = action(
-  SubscribeStore,
-  "setNom",
-  (store, newName: string) => {
-    store.setKey("name", newName);
-  }
-);
-
-// ---------------------------------------------------------------
-
-export const validatePass = action(SubscribeStore, "validatePass", (store) => {
+export const validatePass = action(subscribeStore, "validatePass", (store) => {
   // Retrieve the email in the store
   const { password } = store.get();
   // check password lenght if > 5 => password is valide. could have a more constraint rules
@@ -107,19 +64,19 @@ export const validatePass = action(SubscribeStore, "validatePass", (store) => {
 
 // ---------------------------------------------------------------
 
-export const checkEmail = action(
-  SubscribeStore,
-  "checkEmail",
+export const inputChangeEmail = action(
+  subscribeStore,
+  "inputChangeEmail",
   (store, value: string) => {
     store.setKey("email", value);
     validateEmail();
   }
 );
-
 // ---------------------------------------------------------------
-export const checkPass = action(
-  SubscribeStore,
-  "checkPass",
+
+export const inputChangePassword = action(
+  subscribeStore,
+  "inputChangePassword",
   (store, value: string) => {
     store.setKey("password", value);
     validatePass();
@@ -127,39 +84,42 @@ export const checkPass = action(
 );
 
 // ---------------------------------------------------------------
-export const CheckUser = action(SubscribeStore, "CheckUser", async (store) => {
-  const { email, password } = store.get();
-  let userAutorized;
-  try {
- // login successful.
+export const CheckUser = action(subscribeStore, "CheckUser", async (store) => {
+  store.setKey("isBusy", true);
 
-    userAutorized = await signInWithEmailAndPassword(
+  const { email, password } = store.get();
+  try {
+    // login successful.
+
+    const userAutorized = await signInWithEmailAndPassword(
       firebaseAuth,
       email,
       password
     );
-    store.setKey("uid", userAutorized.user.uid);
-    store.setKey("email", email);
-    
-  } catch(error){
+    setUser (userAutorized.user.uid,email);
+    load(userAutorized.user.uid);
+    store.setKey("password", "");
+    store.setKey("email", "");
+    store.setKey("isvalidePass", false);
+    store.setKey("IsValideEmail", false);
+  } catch (error) {
     console.log(error);
-    store.setKey(
-      "message",
-      "erreur de connexion; username ou password incorrect"
-    );
   }
+  store.setKey("message", "error on line 113  CheckUser subscription.store");
+
+  store.setKey("isBusy", false);
 });
 
 // ---------------------------------------------------------------
 export const CreateUser = action(
-  SubscribeStore,
+  subscribeStore,
   "CreateUser",
   async (store) => {
-    const { isSending, email, password, isvalidePass, IsValideEmail } =
+    const { isBusy, email, password, isvalidePass, IsValideEmail } =
       store.get();
 
-    if (!isSending && isvalidePass && IsValideEmail) {
-      store.setKey("isSending", true);
+    if (!isBusy && isvalidePass && IsValideEmail) {
+      store.setKey("isBusy", false);
 
       try {
         const valideUser = await createUserWithEmailAndPassword(
@@ -168,16 +128,19 @@ export const CreateUser = action(
           password
         );
 
-        store.setKey("uid", valideUser.user.uid);
-      } catch {
-        store.setKey("message", "Erreur de connexion");
+        setUser(valideUser.user.uid, email);
+
+        store.setKey("password", "");
+        store.setKey("email", "");
+        store.setKey("isvalidePass", false);
+        store.setKey("IsValideEmail", false);
+      } catch (error) {
+        store.setKey(
+          "message",
+          "error on line 138 CreateUser subscription.store"
+        );
       }
-    } else {
-      store.setKey(
-        "message",
-        `error ${isSending} && ${isvalidePass} && ${IsValideEmail}`
-      );
     }
-    store.setKey("isSending", false);
+    store.setKey("isBusy", false);
   }
 );
