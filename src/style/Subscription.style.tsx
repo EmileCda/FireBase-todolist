@@ -4,7 +4,11 @@ export const Toto = styled.div`
 `;
 
 
+// export const Button = styled.div<{isSending : boolean}>`
 export const Button = styled.button`
   background-color  : ${AppTheme.colors.light};
-  cursor: pointer;
+  cursor: wait;
 `;
+
+
+  /* ${ props=>props.isSending ? "cursor: wait;" : "cursor: pointer"}; */

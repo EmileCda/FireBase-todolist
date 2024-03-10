@@ -3,50 +3,68 @@
  *
  *
  */
-import { createUserWithEmailAndPassword } from "@firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "@firebase/auth";
 import { action, map } from "nanostores";
 import { firebaseAuth } from "../lib/Firebase";
 
+export type TUser = {};
+
 export type TSubscribeStore = {
-  username: string;
+  email: string;
   password: string;
-  IsValideUsername: boolean | null;
+  IsValideEmail: boolean | null;
   isvalidePass: boolean | null;
-  userLogged :string | null;
-    uid : string |null;
+  isSending: boolean | null;
+  userLogged: string | null;
+  uid: string | null;
+  message: string | null;
 };
 
 export const SubscribeStore = map<TSubscribeStore>({
-  username: "",
+  email: "",
   password: "",
-  IsValideUsername: false,
+  IsValideEmail: false,
   isvalidePass: false,
+  isSending: false,
   userLogged: "",
-   uid : "",
+  uid: "1",
+  message: "",
 });
 
-export const validateUsername = action(
+export const validateEmail = action(
   SubscribeStore,
-  "validate email",
+  "validateEmail",
   (store) => {
     // Retrieve the email in the store
-    const { username } = store.get();
+    const { email } = store.get();
 
-    // no username
-    if (username === "") {
-      store.setKey("IsValideUsername", null);
+    // no email
+    if (email === "") {
+      store.setKey("IsValideEmail", null);
       return;
     }
-    // username do not accordint to polycie
+    // email do according to polycie
 
-    if (/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/.test(username)) {
-      store.setKey("IsValideUsername", true);
+    if (/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/.test(email)) {
+      store.setKey("IsValideEmail", true);
       return;
     }
     // default
-    store.setKey("IsValideUsername", false);
+    store.setKey("IsValideEmail", false);
   }
 );
+
+// ---------------------------------------------------------------
+
+export const validatePass = action(SubscribeStore, "validatePass", (store) => {
+  // Retrieve the email in the store
+  const { password } = store.get();
+  // check password lenght if > 6 => password is valide
+  store.setKey("isvalidePass", password.length > 6 ? true : false);
+});
 
 // ---------------------------------------------------------------
 
@@ -54,7 +72,7 @@ export const checkEmail = action(
   SubscribeStore,
   "checkEmail",
   (store, value: string) => {
-    store.setKey("username", value);
+    store.setKey("email", value);
   }
 );
 
@@ -68,25 +86,42 @@ export const checkPass = action(
 );
 
 // ---------------------------------------------------------------
+export const CheckUser = action(SubscribeStore, "CheckUser", async (store) => {
+  const { email, password } = store.get();
+  const userAutorized = await signInWithEmailAndPassword(
+    firebaseAuth,
+    email,
+    password
+  );
 
-// export const LogIn = action(SubscribeStore, "LogIn", (store) => {});
+  store.setKey("userLogged", userAutorized.user.email);
+  store.setKey("uid", userAutorized.user.uid);
+});
 
 // ---------------------------------------------------------------
 export const CreateUser = action(
   SubscribeStore,
   "CreateUser",
   async (store) => {
-    const { username, password } = store.get();
-    const credential = await createUserWithEmailAndPassword(
-      firebaseAuth,
-      username,
-      password
-    );
-    // store.setkey("user", credential.user);
-    console.log(credential.user.email);
-    console.log(credential.user.uid);
-    
-    store.setKey("userLogged", credential.user.email);
-    store.setKey("uid", credential.user.uid);
+    const { isSending, email, password, isvalidePass, IsValideEmail } =
+      store.get();
+
+    if (!isSending && isvalidePass && IsValideEmail) {
+      store.setKey("isSending", true);
+
+      try {
+        const valideUser = await createUserWithEmailAndPassword(
+          firebaseAuth,
+          email,
+          password
+        );
+        console.log (valideUser);
+        store.setKey("userLogged", valideUser.user.email);
+        store.setKey("uid", valideUser.user.uid);
+      } catch {
+        store.setKey("message", "Erreur de connexion");
+      }
+    }
+    store.setKey("isSending", false);
   }
 );
