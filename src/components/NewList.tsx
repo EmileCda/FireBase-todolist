@@ -1,8 +1,8 @@
 import { useStore } from "@nanostores/react";
 import { Navigate } from "react-router";
-import { Link } from "react-router-dom";
-import { SubscribeStore } from "../store/Subscription.store";
-import { addListTodolist, checkTodoListName, resetRouteChange, todolistStore,  } from "../store/TodoList.store";
+
+import { addTodoList, inputChangeTodoListName, todolistStore } from "../store/TodoList.store";
+import {  MyButton, MyLink } from "../style/Common.style";
 
 import {
   IconContainer,
@@ -13,7 +13,6 @@ import {
   IconUser,
   TextUser,
   UserContainer,
-  Button,
   Input,
 } from "../style/NewList.style";
 
@@ -22,23 +21,20 @@ import {
  * this function do ...
  */
 export default function NewList() {
-  const { uid } = useStore(SubscribeStore);
-  const { reponsible,routeChange } = useStore(todolistStore);
+  const { user, isBusy } = useStore(todolistStore);
 
-  if (!uid) {
+  if (!user.uid) {
     return <Navigate to="/Login"></Navigate>;
   }
-  if (routeChange) {
-    return <Navigate to="/TodoList"></Navigate>;
-  }
+
   return (
     <>
       <TitleContainer>
-        <Link to="/">
           <IconContainer>
+          <MyLink to="/">
             <i className="fa-solid fa-chevron-left"></i>
+            </MyLink>
           </IconContainer>
-        </Link>
         <TexteContainer>
           <Title>Nouvelle liste</Title>
         </TexteContainer>
@@ -50,18 +46,17 @@ export default function NewList() {
           </IconUser>
           <TextUser>
             <p>Par</p>
-            <p>{reponsible}</p>
+            <p>{user.name}</p>
           </TextUser>
         </UpperList>
       </UserContainer>
       <Input
         type="text"
-        onChange={(e) => checkTodoListName(e.currentTarget.value)}
+        onChange={(e) => inputChangeTodoListName(e.currentTarget.value)}
         name="todolistName"
         placeholder="Course du dimanche"
       />
-      {/* <Button onClick={NewTodoList}>Créer</Button> */}
-      <Button onClick={addListTodolist}>Créer</Button>
+      <MyLink to="/TodoList" onClick={addTodoList}><MyButton isLoading={isBusy}> Créer</MyButton></MyLink>
     </>
   );
 }

@@ -1,7 +1,5 @@
-import styled from 'styled-components'
-import { AppTheme } from './App.style'
-
-
+import styled from "styled-components";
+import { AppTheme } from "./App.style";
 
 export const BottomBar = styled.div`
   display: flex;
@@ -9,56 +7,85 @@ export const BottomBar = styled.div`
   background-color: ${AppTheme.colors.dark};
 
   position: fixed;
-bottom: 0px;
-left: 0px;
-right : 0 ;
-padding: 10px;
-
-`
+  bottom: 0px;
+  left: 0px;
+  right: 0;
+  padding: 10px;
+`;
 
 /** container for burger menu icone */
 export const MenuBurger = styled.div`
-i{
-  font-size: 2rem;
-  color:  ${AppTheme.colors.light};
+  i {
+    font-size: 2rem;
+    color: ${AppTheme.colors.light};
+  }
+  cursor: pointer;
+`;
 
-}
-cursor: pointer;
-`
+export const MenuUser = styled.div<{ isVisible: boolean }>`
+  ${(props) => (props.isVisible ? "display : block" : "display : none")};
+  ${(props) => (props.isVisible ? "cursor: pointer;" : "cursor: none")};
 
-export const MenuUser = styled.div<{isVisible : boolean}>`
-
-${ props=>props.isVisible ? "display : block" : "display : none"};
-${ props=>props.isVisible ? "cursor: pointer;" : "cursor: none"};
-
-i{
-  font-size: 2rem;
-  color:  ${AppTheme.colors.light};
-
-}
-
-`
-
+  i {
+    font-size: 2rem;
+    color: ${AppTheme.colors.light};
+  }
+`;
 
 /**
  * Container for the open menu
  */
-export const MenuContainer = styled.div<{isClicked: boolean}>`
+export const MenuContainer = styled.div<{ isClicked: boolean }>`
   background-color: ${AppTheme.colors.dark};
- color: ${AppTheme.colors.light};
-
+  color: ${AppTheme.colors.light};
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   align-items: stretch;
-  position: fixed;
-  bottom: 50px;
+  position: absolute;
+  min-width: 100vw;
+  min-height: 100vh;
+  top: 0;
   left: 0;
   transition: all 0.5s ease-out;
   border-radius: 0px 10px 0px 0px;
-  margin-left : ${props=>props.isClicked ? "0%" : "-200%"};
-  opacity: 0.6;
+  margin-left: ${(props) => (props.isClicked ? "0%" : "-200%")};
+  ul {
+    list-style: none;
+    padding: ${AppTheme.BorderRadius};
+  }
+  li {
+    padding: ${AppTheme.BorderRadius};
+  }
+`;
 
-`
+/**
+ * Container for the open menu
+ */
+export const ProfileContainer = styled.div<{ isClicked: boolean }>`
+  background-color: ${AppTheme.colors.dark};
+  color: ${AppTheme.colors.light};
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  position: absolute;
+  min-width: 100vw;
+  min-height: 100vh;
+  top: 0;
+  left: 0;
+  transition: all 0.5s ease-out;
+  border-radius: 0px 10px 0px 0px;
+  margin-left: ${(props) => (props.isClicked ? "0%" : "-200%")};
+  ul {
+    list-style: none;
+    padding: ${AppTheme.BorderRadius};
+  }
+  li {
+    padding: ${AppTheme.BorderRadius};
+  }
+`;
+
 
 /**
  * Header for the menu
@@ -72,6 +99,9 @@ export const MenuHeader = styled.div`
     font-size: 1.4rem;
     display: flex;
     margin-right: 1rem;
+    color: ${AppTheme.colors.light};
+    font-size: 2rem;
+
   }
   p {
     color: ${AppTheme.colors.light};
@@ -79,36 +109,76 @@ export const MenuHeader = styled.div`
     margin: 0;
     font-weight: bold;
   }
-`
+`;
 
 /**
  * Item for a menu element
  */
-export const MenuItem = styled.p`
-  font-size: .8rem;
+export const MenuItem = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 2rem;
+  padding: ${AppTheme.BorderRadius};
   color: ${AppTheme.colors.light};
-  padding: 1rem;
-  margin: 0;
   a {
     text-decoration: none;
     outline: none;
     border: none;
     color: ${AppTheme.colors.light};
   }
+  :hover {
+    color: ${AppTheme.colors.lessLight};
+    background-color: ${AppTheme.colors.medium};
+  }
 `;
 
-
-export const UserInformation = styled.div<{isClicked: boolean}>`
+export const UserInformation = styled.div<{ isClicked: boolean }>`
   background-color: ${AppTheme.colors.dark};
+  position: absolute;
+  min-width: 100vw;
+  min-height: 100vh;
+  top: 0;
+  left: 0;
   color: ${AppTheme.colors.light};
   display: flex;
   flex-direction: column;
   font-size: 1rem;
-  position: fixed;
-  bottom: 50px;
-  left: 0;
-  padding : 1rem;
+  padding: 1rem;
   transition: all 0.5s ease-out;
-  margin-left : ${props=>props.isClicked ? "0%" : "-200%"};
+  margin-left: ${(props) => (props.isClicked ? "0%" : "-200%")};
   opacity: 0.6;
+`;
+
+export const MenuItemDesc = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const TitleMenu = styled.div``;
+
+
+
+
+/**
+ * Item for a menu element
+ */
+export const ProfileItem = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 1.5rem;
+  padding: ${AppTheme.BorderRadius};
+  color: ${AppTheme.colors.light};
+  a {
+    text-decoration: none;
+    outline: none;
+    border: none;
+    color: ${AppTheme.colors.light};
+  }
+  :hover {
+    color: ${AppTheme.colors.lessLight};
+    background-color: ${AppTheme.colors.medium};
+  }
 `;

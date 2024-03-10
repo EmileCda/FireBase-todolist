@@ -1,18 +1,14 @@
+
 import { useStore } from "@nanostores/react";
 import { Navigate } from "react-router";
-import {  toggleUser } from "../store/Menu.store";
-import { SubscribeStore } from "../store/Subscription.store";
-import {
-  selectTodoList,
-  todolistStore,
-  Ttodolist,
-} from "../store/TodoList.store";
+import { setIdCurrentTodolist, todolistStore, Ttodolist } from "../store/TodoList.store";
+import { MyLink } from "../style/Common.style";
 import {
   HomeContainer,
   IconAdd,
   IconUser,
   LowerList,
-  MyLink,
+  MyP,
   NewListBox,
   TextAdd,
   TextUser,
@@ -21,22 +17,29 @@ import {
   UpperList,
 } from "../style/Home.style";
 
-export function DisplayTodoList(
-  listName: string,
-  responsible: string,
-  id: number
-) {
-  const { listTodoList } = useStore(todolistStore);
+// ----------------------------------------------------------
+
+export type DisplayTodoListProp = {
+  listName: string;
+  responsible: string;
+};
+
+/** display one todo defined by a name and a responsible
+ */
+// ----------------------------------------------------------
+export function DisplayTodoList({
+  listName,
+  responsible,
+}: DisplayTodoListProp) {
   return (
     <>
-      <TodoList onClick={(event) => selectTodoList(id,event)}>
-      {/* <UpperList onClick={(e) => toggleUser(e)}> */}
-      <UpperList >
+      <TodoList>
+        <UpperList>
           <IconUser>
             <i className="fa-solid fa-user"></i>
           </IconUser>
           <TextUser>
-            <p>Par</p>
+            <MyP>Par</MyP>
             <p>{responsible}</p>
           </TextUser>
         </UpperList>
@@ -46,6 +49,10 @@ export function DisplayTodoList(
   );
 }
 
+// ----------------------------------------------------------
+/** Display a push button for adding a new todoList
+ *
+ */
 export function NewTodoList() {
   return (
     <>
@@ -61,58 +68,35 @@ export function NewTodoList() {
   );
 }
 
-/** this function is going to load data from firebase to local store */
-export function InitData() {
-  //  for testing
-  selectTodoList(0);
-}
 
-/** this function is going to load data from firebase to local store */
-export function ChangeToDoList(event: React.MouseEvent<HTMLLIElement, MouseEvent>, index: number) {
-  selectTodoList(index);
-  // event.stopPropagation();
-  // return <Navigate to="/"></Navigate>;
-}
-
+// ----------------------------------------------------------
 /**
- * this function do ...
+ * this function display all todolist and at the end a pushbutton indor to create new yodolist
  */
 export default function Home() {
-  const { uid } = useStore(SubscribeStore);
-  const { listTodoList, idTodoList, todolistName, reponsible, routeChange } =
-    useStore(todolistStore);
-  
-  if (idTodoList < 0) {
-    InitData();
-  }
+  const { user, listTodoList } = useStore(todolistStore);
 
-  if (!uid) {
-    return <Navigate to="/Login" />
-
-  }
-  if (routeChange) {
-    return <Navigate to="/TodoList" />
+  if (!user.uid) {
+    // if not connected redirect to login screen
+    return <Navigate to="/Login" />;
   }
   return (
     <>
       <HomeContainer>
-        <Title>Mes Todos : {idTodoList} {routeChange ? "true" : "false"} </Title>
-        <p>
-          {todolistName} {reponsible}
-        </p>
+        <Title>Mes Todos</Title>
         <ul>
-          {listTodoList.map((TodoList: Ttodolist, index: number) => (
-            <li key={index} onClick={(event) => ChangeToDoList(event,index)}>
-              {DisplayTodoList(
-                TodoList.todolistName,
-                TodoList.reponsible,
-                index
-              )}
+          {listTodoList.map((todoList: Ttodolist, index: number) => (
+            <li key={index} onClick={() => setIdCurrentTodolist(index)}>
+              <MyLink to="/TodoList">
+                <DisplayTodoList
+                  listName={todoList.todolistName}
+                  responsible={user.name}
+                />
+              </MyLink>
             </li>
           ))}
         </ul>
-
-        {NewTodoList()}
+        <NewTodoList />
       </HomeContainer>
     </>
   );

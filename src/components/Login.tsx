@@ -1,15 +1,15 @@
-import { createUserWithEmailAndPassword } from "@firebase/auth";
 import { useStore } from "@nanostores/react";
-import { Navigate, redirect } from "react-router";
+import { Navigate, Outlet } from "react-router";
 import { Link } from "react-router-dom";
 import {
-  checkEmail,
-  checkPass,
   CheckUser,
-  CreateUser,
-  SubscribeStore,
+  inputChangeEmail,
+  inputChangePassword,
+  subscribeStore,
 } from "../store/Subscription.store";
-import { Button } from "../style/Subscription.style";
+import { todolistStore } from "../store/TodoList.store";
+import { ConnectionContainer, Icon, InputGroup, MyButton } from "../style/Common.style";
+
 /**
  * this component display screen subscrib (screen 1)
  * allow to get username (as an email) and password.
@@ -17,30 +17,58 @@ import { Button } from "../style/Subscription.style";
  */
 
 export default function Login() {
-  const { uid } = useStore(SubscribeStore);
-
-  if (uid) {
+  const {  IsValideEmail, isvalidePass,isBusy } = useStore(subscribeStore);
+  const {  user } = useStore(todolistStore);
+  if (user.uid !=="") {
     return <Navigate to="/"></Navigate>;
-
-
   }
+// console.log (user)
+//   if (user.uid !== "") {
+//     console.log (user)
+//     // Je retourne les enfants de la route
+//     return <Outlet />
+//   }
+
   return (
-    <>
-      <h1>Loggin</h1>
-      <input
-        type="email"
-        onChange={(e) => checkEmail(e.currentTarget.value)}
-        name="email"
-      />
-      <input
-        type="text"
-        onChange={(e) => checkPass(e.currentTarget.value)}
-        name="password"
-      />
-      <Button onClick={CheckUser}>Se connecter</Button>
+    <ConnectionContainer emailValide={IsValideEmail} passValide={isvalidePass} isLoading={isBusy}>
+      <h1>Connexion</h1>
+      <InputGroup>
+        <input
+          type="email"
+          onChange={(e) => inputChangeEmail(e.currentTarget.value)}
+          name="email"
+          placeholder="E-mail"
+        />
+        <Icon isValide={IsValideEmail}>
+          {IsValideEmail ? (
+            <i className="fa-solid fa-circle-check"></i>
+          ) : (
+            <i className="fa-solid fa-xmark"></i>
+          )}
+        </Icon>
+      </InputGroup>
+      <InputGroup>
+        <input
+          type="text"
+          onChange={(e) => inputChangePassword(e.currentTarget.value)}
+          name="password"
+          placeholder="Password"
+        />
+        <Icon isValide={isvalidePass}>
+          {isvalidePass ? (
+            <i className="fa-solid fa-circle-check"></i>
+          ) : (
+            <i className="fa-solid fa-xmark"></i>
+          )}
+        </Icon>
+      </InputGroup>
+      <MyButton onClick={CheckUser} isLoading={isBusy}>Se connecter</MyButton>
       <p>
-        Pas de compte ?<Link to="/Subscription">Subscription</Link>
+        Vous n’avez pas de compte ?<br />
       </p>
-    </>
+      <p>
+        <Link to="/Subscription">Inscrivez vous</Link>
+      </p>
+    </ConnectionContainer>
   );
 }

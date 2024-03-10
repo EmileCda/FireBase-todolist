@@ -1,9 +1,11 @@
 /** this store is to manage list of todolist */
 
-import { addDoc, collection } from "@firebase/firestore";
-import { useStore } from "@nanostores/react";
+import { collection, doc, getDoc, setDoc } from "@firebase/firestore";
+
 import { action, map } from "nanostores";
 import { firebaseDb } from "../lib/Firebase";
+
+export const todoListCollection = "Todolists";
 
 export type Ttodo = {
   todoName: string;
@@ -12,231 +14,289 @@ export type Ttodo = {
 
 export type Ttodolist = {
   todolistName: string;
-  reponsible: string;
   todolist: Ttodo[];
+};
+
+export type Tuser = {
+  email: string;
+  name: string;
+
+  uid: string;
 };
 
 export type TTodolistStore = {
-  todolistName: string;
-  reponsible: string;
-  idTodoList: number;
-  todolist: Ttodo[];
-  todoName: string;
   listTodoList: Ttodolist[];
-  routeChange: boolean;
-};
+  user: Tuser;
+  inputNewTodoListName: string;
+  inputNewTodoName: string;
 
-const todo0: Ttodolist = {
-  todolistName: "course 0",
-  reponsible: "kours-man",
-  todolist: [],
-};
-
-const todo1: Ttodolist = {
-  todolistName: "bricolage 2",
-  reponsible: "brikoman",
-  todolist: [],
-};
-
-const todo2: Ttodolist = {
-  todolistName: "ménage",
-  reponsible: "MénaMan",
-  todolist: [],
+  isBusy: boolean;
+  idCurrentTodoList: number;
 };
 
 export const todolistStore = map<TTodolistStore>({
-  todolistName: "",
-  reponsible: "toto-resp",
-  todoName: "",
-  idTodoList: 0,
-  todolist: [],
-  listTodoList: [todo0, todo1, todo2],
-  routeChange: false,
+  listTodoList: [],
+  user: { email: "", name: "", uid: "" },
+
+  inputNewTodoListName: "",
+  inputNewTodoName: "",
+  isBusy: false,
+  idCurrentTodoList: -1,
 });
 
-/** this fonction is for adding a todolist into a list of todolist
- * a todolist must have a name and a responsible par default responsible is userlogged
+/** this function load data from firebase to data store
+ * document is identified by UID
+ * 2 informations are retreived 1) user 2) list of todolist
  */
-export const addListTodolist = action(
+// ---------------------------------------------------------------------
+export const loadStore = action(
   todolistStore,
-  "AddListTodolist",
-  // async (store) => {
-  (store) => {
-    const { todolistName, reponsible, listTodoList } = store.get();
+  "loadStore",
+  async (store, uid: string) => {
+    store.setKey("isBusy", true);
 
-    const myNewTodoList: Ttodolist = {
-      todolistName: todolistName,
-      reponsible: reponsible,
-      todolist: [],
-    };
-    const newListTodo = [myNewTodoList, ...listTodoList];
-
-    store.setKey("listTodoList", newListTodo);
-
-    store.setKey("todolistName", todolistName);
-    store.setKey("reponsible", reponsible);
-    store.setKey("todolist", []);
-    store.setKey("idTodoList", 0);
-    store.setKey("routeChange", true);
+    const todolistCollection = collection(firebaseDb, todoListCollection);
+    const myDoc = doc(todolistCollection, uid);
+    const myDocSnapshot = await getDoc(myDoc);
+    if (myDocSnapshot.exists()) {
+      const myData = myDocSnapshot.data();
+      const loadListTodoList = myData.todoLists;
+      const userInformation = myData.user;
+      store.setKey("listTodoList", loadListTodoList);
+      store.setKey("user", userInformation);
+    }
+    store.setKey("isBusy", false);
   }
-
-  // const status = await addDoc(collection(firebaseDb, "tasks"), {
-  //   todolist: newListTodo,
-  // });
 );
 
-export const resetRouteChange = action(todolistStore, "resetRoute", (store) => {
-  store.setKey("routeChange", false);
-});
-
-/**this function is for checking if the new todolist name is valide
- * name should not be duplicate
+// ---------------------------------------------------------------------
+/** this function activate or desactivate the state of a todo
  *
  */
-export const checkTodoListName = action(
+export const toggleTodoIsDone = action(
   todolistStore,
-  "CheckTodoLitsName",
-  (store, value: string) => {
-    store.setKey("todolistName", value);
-  }
-);
+  "addTodo",
+  (store, idTodo: number) => {
+    store.setKey("isBusy", true);
 
-/**this function is for checking if the new todolist reponsible is valide
- *
- *
- */
-export const checkTodoResponsible = action(
-  todolistStore,
-  "CheckTodoLitsName",
-  (store, value: string) => {
-    store.setKey("reponsible", value);
-  }
-);
+    const { listTodoList, idCurrentTodoList } = store.get();
+    const newlistTodoList = listTodoList.map(
+      (oneTodoList: Ttodolist, todoListIndex: number) => {
+        // return unchanged todolist
+        if (idCurrentTodoList !== todoListIndex) {
+          return oneTodoList;
+        }
+        // looking for the right todo identified by todoIndex
 
-/**this function is for changing reponsible for todolist
- *
- *
- */
-export const changeResponsible = action(
-  todolistStore,
-  "ChangeResponsible",
-  (store, value: string) => {
-    store.setKey("reponsible", value);
-  }
-);
+        const modifiedTabTodo: Ttodo[] = oneTodoList.todolist.map(
+          (oneTodo: Ttodo, todoIndex: number) => {
+            if (idTodo !== todoIndex) {
+              return oneTodo;
+            }
 
-export const addTodo = action(todolistStore, "AddTodo", (store) => {
-  const { todoName, todolist } = store.get();
-  if (todoName !== "") {
-    const newTodo = { todoName: todoName, isDone: false };
-    const newTodoList = [newTodo, ...todolist];
-    store.setKey("todolist", newTodoList);
-    store.setKey("todoName", "");
-    console.log("addTodo");
-  }
-});
+            // returning the whole todo and modifing isdone
+            return { ...oneTodo, isDone: !oneTodo.isDone };
+          }
+        );
 
-/** this function is going to check if the name for todo is correct
- * for the moment there is no check rule
- * later we can add some check rule like duplicate name etc.
- */
-export const checkTodo = action(
-  todolistStore,
-  "CheckTodo",
-  (store, value: string) => {
-    store.setKey("todoName", value);
-  }
-);
-
-export const changeTodo = action(
-  todolistStore,
-  "ChangeTodo",
-  (store, value: string) => {
-    store.setKey("todoName", value);
-  }
-);
-
-/** this functin toggle the current */
-export const toggleTodoState = action(
-  todolistStore,
-  "toggleTodoState",
-  (store, idItem: number) => {
-    const { todolist } = store.get();
-    const myNewTodoList = todolist.map((todo, index) => {
-      if (idItem === index) {
-        const newTodo: Ttodo = {
-          todoName: todo.todoName,
-          isDone: !todo.isDone,
-        };
-        return newTodo;
-      } else {
-        return todo;
+        // return the todolist modified todolist into NewListTodoList
+        return { ...oneTodoList, todolist: modifiedTabTodo };
       }
-    });
-    store.setKey("todolist", myNewTodoList);
-    console.log("toggleTodoState");
+    );
+
+    store.setKey("listTodoList", newlistTodoList);
+    save();
+    store.setKey("isBusy", false);
   }
 );
+// --------------------------------------------------------------------
+/** this function add a new to in the current todolist
+ *
+ */
+export const addTodo = action(todolistStore, "addTodo", (store) => {
+  store.setKey("isBusy", true);
 
-/** this functin toggle the current */
+  const { listTodoList, inputNewTodoName, idCurrentTodoList } = store.get();
+  const newlistTodoList = listTodoList.map(
+    (oneTodoList: Ttodolist, index: number) => {
+      // return unchanged todolist
+      if (idCurrentTodoList !== index) {
+        return oneTodoList;
+      }
+      // return modified todolist by addinf new todo
+      return {
+        todolistName: oneTodoList.todolistName,
+        todolist: [
+          { todoName: inputNewTodoName, isDone: false },
+          ...oneTodoList.todolist,
+        ],
+      };
+    }
+  );
+  store.setKey("inputNewTodoName", "");
+  store.setKey("listTodoList", newlistTodoList);
+  save();
+  store.setKey("isBusy", false);
+});
+// ---------------------------------------------------------------------
+/** this function delete  a todo,identified by an index  in the current todolist */
 export const deleteTodo = action(
   todolistStore,
   "deleteTodo",
-  (store, idItem: number) => {
-    const { todolist } = store.get();
-    const myNewTodoList = todolist.filter((todo, index) => {
-      if (idItem !== index) {
-        return todo;
+  (store, idTodo: number) => {
+    store.setKey("isBusy", true);
+
+    const { listTodoList, idCurrentTodoList } = store.get();
+    const newlistTodoList = listTodoList.map(
+      (oneTodoList: Ttodolist, index: number) => {
+        // return unchanged todolist
+        if (idCurrentTodoList !== index) {
+          return oneTodoList;
+        }
+        // return modified todolist by addinf new todo
+
+        return {
+          ...oneTodoList,
+          todolist: oneTodoList.todolist.filter((oneTodo, index) => {
+            index !== idTodo;
+          }),
+        };
       }
-    });
-    store.setKey("todolist", myNewTodoList);
+    );
+    store.setKey("listTodoList", newlistTodoList);
+    save();
+    store.setKey("isBusy", false);
   }
 );
-
-/** this functin toggle the current */
-export const deleteTodoList = action(
+// ---------------------------------------------------------------------
+/** this function is in charge to manage the input text used for setting a name for a todo */
+export const inputChangeTodoName = action(
   todolistStore,
-  "deleteTodoList",
-  (store, idTodoList: number) => {
-    const { listTodoList } = store.get();
-    const myNewListTodoList = listTodoList.filter((todolist, index) => {
-      if (idTodoList !== index) {
-        return todolist;
-      }
-    });
-    store.setKey("listTodoList", myNewListTodoList);
-    console.log(`deleteTodoList : ${idTodoList}`);
-  }
-);
+  "inputChangeTodoName",
+  (store, inputNewTodoName: string) => {
+    store.setKey("isBusy", true);
 
-/** this functin change the index for current todolist
- * ad then change the current todolist
- */
-export const selectTodoList = action(
+    store.setKey("inputNewTodoName", inputNewTodoName);
+    store.setKey("isBusy", false);
+  }
+); // ---------------------------------------------------------------------
+/** this function is in charge to manage the input text used for setting a name for a todolist */
+export const inputChangeTodoListName = action(
   todolistStore,
-  "selectTodoList",
-  (store, idTodoList: number,event=null) => {
-    const { listTodoList } = store.get();
-    const myNewListTodoList = listTodoList.filter((todolist, index) => {
-      if (idTodoList === index) {
-        store.setKey("todolistName", todolist.todolistName);
-        store.setKey("reponsible", todolist.reponsible);
-        store.setKey("todolist", todolist.todolist);
-        store.setKey("idTodoList", idTodoList);
-        store.setKey("routeChange", true);
-        
-      }
-    });
-    // store.setKey("routeChange", true);
-    // if (event){
-    //   event.stopPropagation();
-    // }
+  "inputChangeTodoListName",
+  (store, inputNewTodolistName: string) => {
+    store.setKey("isBusy", true);
 
-    console.log("selectTodoList")
-
-      
-
-
-    
+    store.setKey("inputNewTodoListName", inputNewTodolistName);
+    store.setKey("isBusy", false);
   }
 );
+
+// ---------------------------------------------------------------------
+/** this function add a new todolist on the top of the list of todo list */
+export const addTodoList = action(todolistStore, "addTodo", (store) => {
+  store.setKey("isBusy", true);
+
+  const { listTodoList, inputNewTodoListName } = store.get();
+  const newListTodoList = [
+    { todolistName: inputNewTodoListName, todolist: [] },
+    ...listTodoList,
+  ];
+
+  store.setKey("idCurrentTodoList", 0);
+  store.setKey("inputNewTodoListName", "");
+  store.setKey("listTodoList", newListTodoList);
+  store.setKey("isBusy", false);
+});
+
+// ---------------------------------------------------------------------
+/** this function set the id regardin to the current todoList */
+export const setIdCurrentTodolist = action(
+  todolistStore,
+  "setIdCurrentTodolist",
+  (store, index: number) => {
+    store.setKey("idCurrentTodoList", index);
+  }
+);
+
+// ---------------------------------------------------------------------
+export const deleteTodoList = action(todolistStore, "addTodo", (store) => {
+  store.setKey("isBusy", true);
+
+  const { listTodoList, idCurrentTodoList } = store.get();
+
+  const newlistTodoList = listTodoList.filter(
+    (oneTodoList: Ttodolist, indexTodoList: number) =>
+     ( indexTodoList !== idCurrentTodoList)
+  );
+
+  store.setKey("listTodoList", newlistTodoList);
+  save();
+  store.setKey("isBusy", false);
+});
+
+// ---------------------------------------------------------------------
+
+export const save = action(todolistStore, "addTodo", async (store) => {
+  store.setKey("isBusy", true);
+
+  const { user, listTodoList } = store.get();
+  if (user.uid !== "") {
+    // name given (todoLists) to firebase in order to have a database field name
+    const todoLists = { user: user, todolist: listTodoList };
+
+    const myDoc = doc(firebaseDb, todoListCollection, user.uid);
+    const status = await setDoc(myDoc, { todoLists });
+    store.setKey("isBusy", false);
+  }
+});
+
+// ---------------------------------------------------------------------
+export const load = action(
+  todolistStore,
+  "addTodo",
+  async (store, uidFromSubscribe) => {
+    store.setKey("isBusy", true);
+
+    const todolistCollection = collection(firebaseDb, todoListCollection);
+
+    const myDoc = doc(todolistCollection, uidFromSubscribe);
+    const myDocSnapshot = await getDoc(myDoc);
+    if (myDocSnapshot.exists()) {
+      const myData = myDocSnapshot.data().todoLists;
+      store.setKey("listTodoList", myData.todolist);
+      const myUser: Tuser = {
+        email: myData.user.email,
+        name: myData.user.name,
+        uid: uidFromSubscribe,
+      };
+      store.setKey("user", myUser);
+    }
+    store.setKey("isBusy", false);
+  }
+);
+
+// ---------------------------------------------------------------------
+export const setUser = action(
+  todolistStore,
+  "addTodo",
+  (store, uidFromSubscribe: string, emailFromSubscribe: string) => {
+    const { user } = store.get();
+
+    const newuser = {
+      ...user,
+      uid: uidFromSubscribe,
+      email: emailFromSubscribe,
+    };
+
+    store.setKey("user", newuser);
+  }
+);
+// ---------------------------------------------------------------------
+export const resetUser = action(todolistStore, "addTodo", (store) => {
+  store.setKey("user", {
+    name: "",
+    email: "",
+    uid: "",
+  });
+});

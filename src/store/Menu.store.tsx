@@ -7,26 +7,12 @@ import { action, map } from "nanostores";
 export type TMenuStore = {
   isClickedUser: boolean;
   isClickedMenu: boolean;
-  // routeChange: boolean;
-  // newRoute: string;
 };
 
 export const MenuStore = map<TMenuStore>({
   isClickedUser: false,
   isClickedMenu: false,
-  // routeChange: false,
-  // newRoute: "/",
 });
-
-// export const setRoute = action(MenuStore, "setRoute", (store, value) => {
-//   const { newRoute } = store.get();
-//   if (newRoute !== value) {
-//   } 
-// });
-
-// export const resetRouteChange = action(MenuStore, "resetRoute", (store) => {
-//   store.setKey("routeChange", false);
-// });
 // ---------------------------------------------------------------
 
 export const toggleUser = action(MenuStore, "toggleUser", (store, event) => {
