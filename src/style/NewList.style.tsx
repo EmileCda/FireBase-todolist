@@ -14,11 +14,14 @@ export const TitleContainer = styled.div`
 `;
 
 export const IconContainer = styled.div`
-  color: ${AppTheme.colors.light};
   font-size: 2rem;
   display: flex;
   flex-grow: 1;
   padding: ${AppTheme.BorderRadius};
+  i{
+    color: ${AppTheme.colors.light};
+
+  }
 `;
 export const TexteContainer = styled.div`
   display: flex;

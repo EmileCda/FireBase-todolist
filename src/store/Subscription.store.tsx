@@ -14,6 +14,7 @@ export type TUser = {};
 
 export type TSubscribeStore = {
   email: string;
+  name : string;
   password: string;
   IsValideEmail: boolean | null;
   isvalidePass: boolean | null;
@@ -24,7 +25,8 @@ export type TSubscribeStore = {
 };
 
 export const SubscribeStore = map<TSubscribeStore>({
-  email: "",
+  email: "liame@dot.com",
+  name: "titi-name",
   password: "",
   IsValideEmail: false,
   isvalidePass: false,
@@ -56,6 +58,13 @@ export const validateEmail = action(
     store.setKey("IsValideEmail", false);
   }
 );
+
+// ---------------------------------------------------------------
+
+export const setName= action(SubscribeStore, "setNom", (store,newName : string) => {
+
+  store.setKey("name", newName);
+});
 
 // ---------------------------------------------------------------
 

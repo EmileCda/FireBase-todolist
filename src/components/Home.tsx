@@ -1,6 +1,9 @@
 import { useStore } from "@nanostores/react";
+import { useEffect } from "react";
 import { Navigate } from "react-router";
-import {  toggleUser } from "../store/Menu.store";
+import { Link } from "react-router-dom";
+import { RenderErrorBoundary } from "react-router/dist/lib/hooks";
+import { toggleUser } from "../store/Menu.store";
 import { SubscribeStore } from "../store/Subscription.store";
 import {
   selectTodoList,
@@ -21,6 +24,10 @@ import {
   UpperList,
 } from "../style/Home.style";
 
+export function testTiti(id: number) {
+  console.log(id);
+}
+
 export function DisplayTodoList(
   listName: string,
   responsible: string,
@@ -29,9 +36,10 @@ export function DisplayTodoList(
   const { listTodoList } = useStore(todolistStore);
   return (
     <>
-      <TodoList onClick={(event) => selectTodoList(id,event)}>
-      {/* <UpperList onClick={(e) => toggleUser(e)}> */}
-      <UpperList >
+      <TodoList onClick={() => testTiti(id)}>
+        {/* <TodoList onClick={() => selectTodoList(id)}> */}
+        {/* <UpperList onClick={(e) => toggleUser(e)}> */}
+        <UpperList>
           <IconUser>
             <i className="fa-solid fa-user"></i>
           </IconUser>
@@ -68,7 +76,10 @@ export function InitData() {
 }
 
 /** this function is going to load data from firebase to local store */
-export function ChangeToDoList(event: React.MouseEvent<HTMLLIElement, MouseEvent>, index: number) {
+export function ChangeToDoList(
+  event: React.MouseEvent<HTMLLIElement, MouseEvent>,
+  index: number
+) {
   selectTodoList(index);
   // event.stopPropagation();
   // return <Navigate to="/"></Navigate>;
@@ -79,35 +90,30 @@ export function ChangeToDoList(event: React.MouseEvent<HTMLLIElement, MouseEvent
  */
 export default function Home() {
   const { uid } = useStore(SubscribeStore);
-  const { listTodoList, idTodoList, todolistName, reponsible, routeChange } =
+  const { listTodoList, idTodoList } =
     useStore(todolistStore);
-  
+
   if (idTodoList < 0) {
     InitData();
   }
 
   if (!uid) {
-    return <Navigate to="/Login" />
-
-  }
-  if (routeChange) {
-    return <Navigate to="/TodoList" />
+    return <Navigate to="/Login" />;
   }
   return (
     <>
       <HomeContainer>
-        <Title>Mes Todos : {idTodoList} {routeChange ? "true" : "false"} </Title>
-        <p>
-          {todolistName} {reponsible}
-        </p>
+        <Title>Mes Todos</Title>
         <ul>
           {listTodoList.map((TodoList: Ttodolist, index: number) => (
-            <li key={index} onClick={(event) => ChangeToDoList(event,index)}>
-              {DisplayTodoList(
-                TodoList.todolistName,
-                TodoList.reponsible,
-                index
-              )}
+            <li key={index} onClick={(event) => ChangeToDoList(event, index)}>
+              <Link to="/TodoList">
+                {DisplayTodoList(
+                  TodoList.todolistName,
+                  TodoList.reponsible,
+                  index
+                )}
+              </Link>
             </li>
           ))}
         </ul>
