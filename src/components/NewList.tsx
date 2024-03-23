@@ -1,8 +1,9 @@
 import { useStore } from "@nanostores/react";
 import { Navigate } from "react-router";
-import { Link } from "react-router-dom";
+
 import { SubscribeStore } from "../store/Subscription.store";
-import { addListTodolist, checkTodoListName,  todolistStore,  } from "../store/TodoList.store";
+import { addListTodolist, checkTodoListName,  setUid,  todolistStore,  } from "../store/TodoList.store";
+import {  MyButton, MyLink } from "../style/Common.style";
 
 import {
   IconContainer,
@@ -13,7 +14,6 @@ import {
   IconUser,
   TextUser,
   UserContainer,
-  Button,
   Input,
 } from "../style/NewList.style";
 
@@ -23,21 +23,20 @@ import {
  */
 export default function NewList() {
   const { uid } = useStore(SubscribeStore);
-  const { reponsible } = useStore(todolistStore);
+  const { responsible, isLoading } = useStore(todolistStore);
 
   if (!uid) {
     return <Navigate to="/Login"></Navigate>;
   }
-  // if (routeChange) {
-  //   return <Navigate to="/TodoList"></Navigate>;
-  // }
+  setUid(uid);
+
   return (
     <>
       <TitleContainer>
           <IconContainer>
-          <Link to="/">
+          <MyLink to="/">
             <i className="fa-solid fa-chevron-left"></i>
-            </Link>
+            </MyLink>
           </IconContainer>
         <TexteContainer>
           <Title>Nouvelle liste</Title>
@@ -50,7 +49,7 @@ export default function NewList() {
           </IconUser>
           <TextUser>
             <p>Par</p>
-            <p>{reponsible}</p>
+            <p>{responsible}</p>
           </TextUser>
         </UpperList>
       </UserContainer>
@@ -60,7 +59,7 @@ export default function NewList() {
         name="todolistName"
         placeholder="Course du dimanche"
       />
-      <Link to="/TodoList" onClick={addListTodolist}> <Button>Créer</Button></Link>
+      <MyLink to="/TodoList" onClick={addListTodolist}><MyButton isLoading={isLoading}> Créer</MyButton></MyLink>
     </>
   );
 }

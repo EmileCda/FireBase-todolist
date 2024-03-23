@@ -17,6 +17,7 @@ export const AppTheme = {
     light: "#EDFFFB",
     checked:"#F5F5F5",
     trash: "#BB8579",
+    notValid :"#ef233c",
   },
   font: {
     regular: "Poppins, cursive",
@@ -46,6 +47,7 @@ export const AppGlobalStyle = createGlobalStyle`
     font-size: 18px;
     font-family: ${AppTheme.font.regular};
     box-sizing: border-box;
+    
   }
   html, body, #root {
     display: flex;

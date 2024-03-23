@@ -1,12 +1,9 @@
 import styled from "styled-components";
 import { AppTheme } from "./App.style";
 
-
 export const TodoListContainer = styled.div<{ isLoading: boolean }>`
-
-${(props) =>props.isLoading ? "cursor: wait;" : null }
+  ${(props) => (props.isLoading ? "cursor: wait;" : null)}
 `;
-
 
 export const DisplayListTodo = styled.div`
   display: flex;
@@ -51,5 +48,28 @@ export const TodoName = styled.div`
 export const Icone = styled.div`
   font-size: 2rem;
   padding: 0 ${AppTheme.BorderRadius};
-  color: ${AppTheme.colors.trash};
+  color: ${AppTheme.colors.light};
+  background-color: ${AppTheme.colors.trash};
+`;
+
+export const DeleteList = styled.div<{ isLoading: boolean }>`
+  position: absolute;
+  left: 0;
+  bottom: 60px;
+  min-width: 100vw;
+  text-align: center;
+  cursor: ${(props) => (props.isLoading ? "progress" : "pointer")};
+`;
+
+export const IconButton = styled.div<{ isLoading: boolean }>`
+  cursor: ${(props) => (props.isLoading ? "progress" : "pointer")};
+`;
+
+export const InputGroup = styled.div`
+  display: flex;
+  align-items: center;
+  i {
+    font-size: 2rem;
+    color: ${AppTheme.colors.dark};
+  }
 `;
